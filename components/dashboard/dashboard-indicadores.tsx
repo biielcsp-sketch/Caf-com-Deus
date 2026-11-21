@@ -9,6 +9,7 @@ export type Painel = {
   id: string;
   titulo: string;
   contador?: number | string;
+  legenda?: string;
   items: { label: string; count: number }[];
 };
 
@@ -67,11 +68,23 @@ export function DashboardIndicadores({
           >
             <span className="text-sm font-semibold leading-tight text-primary">{p.titulo}</span>
             {p.contador !== undefined && (
-              <span className="font-display text-2xl font-semibold leading-none text-foreground">
-                {p.contador}
+              <span className="flex items-baseline gap-1.5">
+                <span className="font-display text-2xl font-semibold leading-none text-foreground">
+                  {p.contador}
+                </span>
+                {p.legenda && <span className="text-[11px] text-muted-foreground">{p.legenda}</span>}
               </span>
             )}
           </button>
+        ))}
+        {visiveis.map((i) => (
+          <div
+            key={i.id}
+            className="glass-panel flex min-h-24 flex-col justify-between rounded-3xl p-4"
+          >
+            <span className="text-sm font-semibold leading-tight text-primary">{i.titulo}</span>
+            <span className="font-display text-2xl font-semibold leading-none text-foreground">{i.valor}</span>
+          </div>
         ))}
         <button
           type="button"
@@ -82,17 +95,6 @@ export function DashboardIndicadores({
           <span className="text-sm font-semibold leading-tight">Personalizar</span>
         </button>
       </div>
-
-      {visiveis.length > 0 && (
-        <div className="grid grid-cols-3 gap-3">
-          {visiveis.map((i) => (
-            <div key={i.id} className="glass-panel rounded-3xl p-4">
-              <p className="font-display text-2xl font-semibold leading-none text-foreground">{i.valor}</p>
-              <p className="mt-2 text-[11px] leading-tight text-muted-foreground">{i.titulo}</p>
-            </div>
-          ))}
-        </div>
-      )}
 
       <dialog
         ref={dialogRef}

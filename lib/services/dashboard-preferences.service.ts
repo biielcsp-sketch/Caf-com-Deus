@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { AppError, dbError } from "@/lib/errors";
 
 // Ids que o Dashboard sabe exibir. Qualquer outro valor é descartado.
-export const INDICADORES_VALIDOS = ["encontros-mes", "ativas", "lideres", "total"] as const;
+export const INDICADORES_VALIDOS = ["encontros-mes", "vagas-livres", "cafes-lotados", "ausencias"] as const;
 
 function filtrar(ids: unknown): string[] {
   if (!Array.isArray(ids)) return [];
