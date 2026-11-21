@@ -49,10 +49,10 @@ export function CafesTabs({
             key={t.key}
             type="button"
             onClick={() => setTab(t.key)}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+            className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
               tab === t.key
                 ? "bg-primary text-primary-foreground"
-                : "border border-border bg-card text-muted-foreground hover:text-foreground"
+                : "glass-panel text-muted-foreground hover:text-foreground"
             }`}
           >
             {t.label}

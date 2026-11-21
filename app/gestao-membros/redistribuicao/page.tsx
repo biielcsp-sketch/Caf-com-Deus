@@ -1,5 +1,6 @@
 import { listIntegratedParticipants, listLeadersWithCafe } from "@/lib/services/integrated.service";
 import { RedistributionRow } from "@/components/gestao-membros/redistribution-row";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { BackLink } from "@/components/ui/BackLink";
 import { Card } from "@/components/ui/Card";
 
@@ -26,13 +27,12 @@ export default async function RedistribuicaoPage({
   ]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <BackLink href="/gestao-membros" label="Gestão de Membros" />
       <div>
-        <h1 className="text-2xl font-semibold text-foreground">Redistribuição</h1>
+        <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground">Redistribuição</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Busque a participante que precisa trocar de café. Toque no cartão para ver os dados dela, da
-          líder e do café atual, e escolha a nova líder. O vínculo antigo é encerrado e fica no histórico.
+          Busque quem precisa trocar de café
         </p>
       </div>
 
@@ -67,12 +67,15 @@ export default async function RedistribuicaoPage({
             <p className="text-sm text-muted-foreground">Nenhuma participante encontrada com esses filtros.</p>
           </Card>
         )}
-        {temFiltro && participants.length > 0 && (
-          <p className="text-xs text-muted-foreground">{participants.length} participante(s) encontrada(s).</p>
+        {participants.length > 0 && (
+          <SecaoRetratil titulo="Resultados" contador={participants.length} abertoPorPadrao>
+            <div className="flex flex-col gap-2">
+              {participants.map((p) => (
+                <RedistributionRow key={p.id} participant={p} leaders={leaders} />
+              ))}
+            </div>
+          </SecaoRetratil>
         )}
-        {participants.map((p) => (
-          <RedistributionRow key={p.id} participant={p} leaders={leaders} />
-        ))}
       </div>
     </div>
   );

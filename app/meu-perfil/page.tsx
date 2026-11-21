@@ -18,7 +18,7 @@ export default async function MeuPerfilPage() {
 
   return (
     <RoleShell profile={profile} avatarUrl={avatarUrl}>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
         <BackLink href={home.href} label={home.label} />
         <ProfileView profile={profile} />
       </div>

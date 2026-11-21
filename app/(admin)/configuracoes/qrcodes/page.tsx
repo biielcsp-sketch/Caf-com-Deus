@@ -11,7 +11,7 @@ export default async function QrCodesPage() {
   const registrations = await listEnrollmentRegistrations(source.code);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <BackLink href="/dashboard" label="Dashboard" />
       <PageHeader
         title="QR Code de Cadastro"
