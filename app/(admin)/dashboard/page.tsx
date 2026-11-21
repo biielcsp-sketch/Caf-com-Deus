@@ -1,6 +1,5 @@
-import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { StatCard } from "@/components/dashboard/stat-card";
-import { BarList } from "@/components/dashboard/bar-list";
+import { DashboardIndicadores } from "@/components/dashboard/dashboard-indicadores";
 import { BackButton } from "@/components/ui/BackButton";
 import { getAdminDashboard } from "@/lib/services/dashboard.service";
 import { listPendingContacts } from "@/lib/services/contact-alerts.service";
@@ -58,27 +57,36 @@ export default async function DashboardPage() {
         <StatCard label="Precisam de contato" value={data.needingAttention} />
       </div>
 
-      <SecaoRetratil titulo="Participantes por região" contador={data.byRegion.length}>
-        <BarList items={data.byRegion} />
-      </SecaoRetratil>
-      <SecaoRetratil titulo="Participantes por líder" contador={data.byLeader.length}>
-        <BarList items={data.byLeader} />
-      </SecaoRetratil>
-      <SecaoRetratil titulo="Ocupação por grupo" contador={data.byGroup.length}>
-        <BarList
-          items={data.byGroup.map((g) => ({ label: `${g.name} (${g.occupied}/${g.capacity})`, count: g.occupied }))}
-        />
-      </SecaoRetratil>
-      <SecaoRetratil titulo="Frequência (geral)">
-        <BarList
-          items={data.attendanceBreakdown
-            .filter((a) => ATTENDANCE_LABELS[a.label])
-            .map((a) => ({ label: ATTENDANCE_LABELS[a.label], count: a.count }))}
-        />
-      </SecaoRetratil>
-      <SecaoRetratil titulo="Evolução mensal de inscrições">
-        <BarList items={data.monthlyEvolution.map((m) => ({ label: m.label, count: m.count }))} />
-      </SecaoRetratil>
+      <DashboardIndicadores
+        paineis={[
+          { id: "regiao", titulo: "Por região", contador: data.byRegion.length, items: data.byRegion },
+          { id: "lider", titulo: "Por líder", contador: data.byLeader.length, items: data.byLeader },
+          {
+            id: "grupo",
+            titulo: "Ocupação por grupo",
+            contador: data.byGroup.length,
+            items: data.byGroup.map((g) => ({ label: `${g.name} (${g.occupied}/${g.capacity})`, count: g.occupied })),
+          },
+          {
+            id: "frequencia",
+            titulo: "Frequência",
+            items: data.attendanceBreakdown
+              .filter((a) => ATTENDANCE_LABELS[a.label])
+              .map((a) => ({ label: ATTENDANCE_LABELS[a.label], count: a.count })),
+          },
+          {
+            id: "inscricoes",
+            titulo: "Inscrições por mês",
+            items: data.monthlyEvolution.map((m) => ({ label: m.label, count: m.count })),
+          },
+        ]}
+        indicadores={[
+          { id: "encontros-mes", titulo: "Encontros no mês", valor: data.meetingsThisMonth },
+          { id: "ativas", titulo: "Participantes ativas", valor: data.activeParticipants },
+          { id: "lideres", titulo: "Líderes ativas", valor: data.activeLeaders },
+          { id: "total", titulo: "Total de participantes", valor: data.totalParticipants },
+        ]}
+      />
     </div>
   );
 }
