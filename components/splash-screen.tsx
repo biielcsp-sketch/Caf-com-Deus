@@ -32,7 +32,7 @@ export function SplashScreen() {
   return (
     <div
       onClick={dismiss}
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-background transition-opacity duration-300 ${
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-white transition-opacity duration-300 ${
         fadingOut ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >

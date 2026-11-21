@@ -42,10 +42,10 @@ export default async function CadastroPage({
           />
         </div>
 
-        <Card className="p-6 sm:p-8">
+        <Card className="glass-panel rounded-[2.375rem] p-6 sm:p-8">
           {!isValidSource ? (
             <div className="flex flex-col items-center gap-2 text-center">
-              <h1 className="text-lg font-semibold text-foreground">Link expirado</h1>
+              <h1 className="font-display text-2xl font-semibold text-foreground">Link expirado</h1>
               <p className="text-sm text-muted-foreground">
                 Este link de inscrição não está mais disponível. Fale com quem te passou o
                 QR Code para conseguir um novo.
@@ -54,7 +54,7 @@ export default async function CadastroPage({
           ) : (
             <>
               <div className="mb-6 text-center">
-                <h1 className="text-lg font-semibold text-foreground">Quero participar</h1>
+                <h1 className="font-display text-[30px] font-semibold leading-[1.1] tracking-tight text-foreground">Quero participar</h1>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {source?.leaderId
                     ? `Preencha seus dados e crie seu acesso. Você entra direto no café${source.groupName ? ` ${source.groupName}` : " da sua líder"}.`
@@ -62,8 +62,8 @@ export default async function CadastroPage({
                 </p>
               </div>
               {cafeRules && (
-                <div className="mb-6 rounded-xl border border-border bg-muted p-4">
-                  <p className="mb-2 text-sm font-semibold text-foreground">Como funciona o café</p>
+                <div className="glass-gold mb-6 rounded-3xl p-4">
+                  <p className="font-display mb-1.5 text-base font-semibold text-foreground">Como funciona o café</p>
                   <p className="whitespace-pre-line text-sm text-muted-foreground">{cafeRules}</p>
                 </div>
               )}
