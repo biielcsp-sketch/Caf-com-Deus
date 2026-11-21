@@ -8,7 +8,7 @@ import { saveDashboardIndicadoresAction } from "@/app/actions/dashboard-preferen
 export type Painel = {
   id: string;
   titulo: string;
-  contador?: number;
+  contador?: number | string;
   items: { label: string; count: number }[];
 };
 

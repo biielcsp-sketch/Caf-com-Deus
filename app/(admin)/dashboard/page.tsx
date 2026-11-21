@@ -14,6 +14,14 @@ const ATTENDANCE_LABELS: Record<string, string> = {
   justificou: "Justificaram",
 };
 
+// % de presentes sobre todos os registros de frequência (só os 3 status conhecidos).
+function pctPresentes(lista: { label: string; count: number }[]): string {
+  const validos = lista.filter((a) => ATTENDANCE_LABELS[a.label]);
+  const total = validos.reduce((soma, a) => soma + a.count, 0);
+  const presentes = validos.find((a) => a.label === "presente")?.count ?? 0;
+  return total > 0 ? `${Math.round((presentes / total) * 100)}%` : "—";
+}
+
 export default async function DashboardPage() {
   const [data, semContato, escolhidos] = await Promise.all([
     getAdminDashboard(),
@@ -73,6 +81,7 @@ export default async function DashboardPage() {
           {
             id: "frequencia",
             titulo: "Frequência",
+            contador: pctPresentes(data.attendanceBreakdown),
             items: data.attendanceBreakdown
               .filter((a) => ATTENDANCE_LABELS[a.label])
               .map((a) => ({ label: ATTENDANCE_LABELS[a.label], count: a.count })),
@@ -80,6 +89,7 @@ export default async function DashboardPage() {
           {
             id: "inscricoes",
             titulo: "Inscrições por mês",
+            contador: data.monthlyEvolution.reduce((soma, m) => soma + m.count, 0),
             items: data.monthlyEvolution.map((m) => ({ label: m.label, count: m.count })),
           },
         ]}
