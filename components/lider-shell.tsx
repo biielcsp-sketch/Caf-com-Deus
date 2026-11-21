@@ -18,6 +18,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import { NavLink } from "@/components/nav-link";
+import { BottomNav } from "@/components/bottom-nav";
 import { NotificationBellIcon, NotificationsNavItem } from "@/components/notification-bell";
 import { SidebarIdentity } from "@/components/ui/SidebarIdentity";
 import { logout } from "@/app/actions/auth";
@@ -57,7 +58,7 @@ export function LiderShell({
   return (
     <div className="flex min-h-screen flex-1">
       {/* Sidebar — desktop */}
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-logo-panel px-4 py-6 md:flex">
+      <aside className="glass-panel m-3 hidden w-64 shrink-0 flex-col rounded-[2rem] px-4 py-6 md:flex">
         <div className="mb-6 flex justify-center px-2">
           <Image src="/icons/logo-header.png" alt="Café com Deus Shine" width={1600} height={1011} className="h-14 w-auto" />
         </div>
@@ -72,7 +73,7 @@ export function LiderShell({
           <form action={logout}>
             <button
               type="submit"
-              className="mt-2 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted"
+              className="mt-2 flex w-full items-center gap-3 rounded-full px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted"
             >
               <LogOut size={18} />
               Sair
@@ -89,7 +90,7 @@ export function LiderShell({
             className="absolute inset-0 bg-black/40"
             onClick={() => setMenuOpen(false)}
           />
-          <aside className="absolute left-0 top-0 flex h-full w-72 flex-col bg-logo-panel px-4 py-6">
+          <aside className="glass-bar absolute left-0 top-0 flex h-full w-72 flex-col rounded-r-[2rem] px-4 py-6">
             <div className="mb-6 flex items-center justify-between px-2">
               <Image src="/icons/logo-header.png" alt="Café com Deus Shine" width={1600} height={1011} className="mx-auto h-12 w-auto" />
               <button aria-label="Fechar menu" onClick={() => setMenuOpen(false)}>
@@ -112,7 +113,7 @@ export function LiderShell({
               <form action={logout}>
                 <button
                   type="submit"
-                  className="mt-2 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted"
+                  className="mt-2 flex w-full items-center gap-3 rounded-full px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted"
                 >
                   <LogOut size={18} />
                   Sair
@@ -125,7 +126,7 @@ export function LiderShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar — mobile */}
-        <header className="relative flex items-center border-b border-border bg-logo-panel px-4 py-3 md:hidden">
+        <header className="glass-bar relative mx-3 mt-3 flex items-center rounded-full px-5 py-2 md:hidden">
           <button aria-label="Abrir menu" onClick={() => setMenuOpen(true)} className="relative z-10">
             <Menu size={22} />
           </button>
@@ -142,7 +143,17 @@ export function LiderShell({
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-8">{children}</main>
+        <main className="flex-1 p-4 pb-32 md:p-8">{children}</main>
+
+        <BottomNav
+          items={[
+            NAV_ITEMS[0],
+            NAV_ITEMS[3],
+            NAV_ITEMS[2],
+            NAV_ITEMS[4],
+          ]}
+          onMenu={() => setMenuOpen(true)}
+        />
       </div>
     </div>
   );
