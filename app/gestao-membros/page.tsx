@@ -3,7 +3,6 @@ import { ClipboardList, Shuffle, ChevronRight, UsersRound, GitBranch } from "luc
 import { getMemberManagementCounts } from "@/lib/services/member-management.service";
 import { listPendingContacts } from "@/lib/services/contact-alerts.service";
 import { PendingContactsCard } from "@/components/acompanhamento/pending-contacts-card";
-import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 
 export default async function GestaoMembrosPage() {
@@ -49,33 +48,29 @@ export default async function GestaoMembrosPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Gestão de Membros"
-        description="Distribuição das novas participantes e redistribuição das membras."
+        description="Distribuição e redistribuição"
       />
 
       <PendingContactsCard contacts={semContato} mode="gestao" />
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div className="flex flex-col gap-3">
         {sections.map((s) => (
-          <Link key={s.href} href={s.href} className="block">
-            <Card className="flex h-full flex-col gap-3 p-5 hover:bg-muted">
-              <div className="flex items-center justify-between">
-                <s.icon size={22} className="text-primary" />
-                <ChevronRight size={18} className="text-muted-foreground" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">{s.title}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{s.description}</p>
-              </div>
-              {s.count !== null && (
-                <p className="mt-auto text-sm text-foreground">
-                  <span className="text-2xl font-semibold">{s.count}</span>{" "}
-                  <span className="text-xs text-muted-foreground">{s.countLabel}</span>
-                </p>
-              )}
-            </Card>
+          <Link
+            key={s.href}
+            href={s.href}
+            className="glass-panel flex min-h-16 items-center gap-3 rounded-3xl px-5 py-3"
+          >
+            <s.icon size={22} className="shrink-0 text-primary" />
+            <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-foreground">
+              {s.title}
+            </span>
+            {s.count !== null && (
+              <span className="font-display shrink-0 text-xl font-semibold text-primary">{s.count}</span>
+            )}
+            <ChevronRight size={18} className="shrink-0 text-muted-foreground" />
           </Link>
         ))}
       </div>

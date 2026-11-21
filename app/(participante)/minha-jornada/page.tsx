@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Pencil } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { BackButton } from "@/components/ui/BackButton";
 import { getCurrentProfile } from "@/lib/services/profiles.service";
 import { getCurrentParticipant, getParticipantTimeline } from "@/lib/services/participants.service";
@@ -51,10 +52,10 @@ export default async function MinhaJornadaPage() {
   const upcomingMeetings = groupMeetings.filter((m) => m.date >= today && m.status !== "cancelado");
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <BackButton />
       <div>
-        <h1 className="text-2xl font-semibold text-foreground">
+        <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground">
           Olá, {profile?.full_name.split(" ")[0]} 🌷
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -65,8 +66,7 @@ export default async function MinhaJornadaPage() {
 
       {/* Onde ela está no processo: já entrou num café ou ainda espera
           direcionamento. É a primeira dúvida de quem acabou de se cadastrar. */}
-      <Card className="p-5">
-        <p className="mb-2 text-sm font-semibold text-foreground">Meu processo</p>
+      <SecaoRetratil titulo="Meu processo">
         {participant.group ? (
           <>
             <span className="inline-flex rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary">
@@ -91,27 +91,24 @@ export default async function MinhaJornadaPage() {
         <p className="mt-3 text-xs text-muted-foreground">
           Situação atual: {PARTICIPANT_STATUS_LABELS[participant.status]}
         </p>
-      </Card>
+      </SecaoRetratil>
 
       {cafeRules && (
-        <Card className="p-5">
-          <p className="mb-2 text-sm font-semibold text-foreground">Como funciona o café</p>
+        <SecaoRetratil titulo="Como funciona o café">
           <p className="whitespace-pre-line text-sm text-muted-foreground">{cafeRules}</p>
-        </Card>
+        </SecaoRetratil>
       )}
 
       {participant.leader && (
-        <Card className="p-5">
-          <p className="mb-2 text-sm font-semibold text-foreground">Minha líder</p>
+        <SecaoRetratil titulo="Minha líder">
           <p className="text-sm text-foreground">{participant.leader.profile?.full_name}</p>
           <p className="text-sm text-muted-foreground">
             {participant.leader.profile?.phone ?? participant.leader.profile?.whatsapp ?? "sem contato informado"}
           </p>
-        </Card>
+        </SecaoRetratil>
       )}
 
-      <Card className="p-5">
-        <p className="mb-3 text-sm font-semibold text-foreground">Próximos encontros</p>
+      <SecaoRetratil titulo="Próximos encontros">
         {upcomingMeetings.length === 0 && (
           <p className="text-sm text-muted-foreground">Nenhum encontro agendado.</p>
         )}
@@ -139,7 +136,7 @@ export default async function MinhaJornadaPage() {
             </div>
           ))}
         </div>
-      </Card>
+      </SecaoRetratil>
 
       <Card className="p-5">
         <div className="mb-3 flex items-center justify-between">
@@ -163,17 +160,15 @@ export default async function MinhaJornadaPage() {
         </dl>
       </Card>
 
-      <Card className="p-6">
-        <p className="text-sm font-semibold text-foreground">Minha jornada</p>
+      <SecaoRetratil titulo="Minha jornada">
         <div className="mt-3">
           <Timeline entries={timeline} />
         </div>
-      </Card>
+      </SecaoRetratil>
 
-      <Card className="p-6">
-        <p className="mb-3 text-sm font-semibold text-foreground">Presença</p>
+      <SecaoRetratil titulo="Presença">
         <AttendanceHistory history={attendanceHistory} />
-      </Card>
+      </SecaoRetratil>
     </div>
   );
 }

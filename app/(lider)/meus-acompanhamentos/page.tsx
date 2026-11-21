@@ -3,6 +3,7 @@ import { getMyLeaderContext } from "@/lib/services/leaders.service";
 import { computeAttentionAlerts } from "@/lib/services/followup.service";
 import { AttentionList } from "@/components/acompanhamento/attention-list";
 import { AcompanhamentoExplainer } from "@/components/acompanhamento/acompanhamento-explainer";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { BackLink } from "@/components/ui/BackLink";
 
 export default async function MeusAcompanhamentosPage() {
@@ -17,15 +18,17 @@ export default async function MeusAcompanhamentosPage() {
   return (
     <div>
       <BackLink href="/inicio" label="Início" />
-      <h1 className="mt-3 text-2xl font-semibold text-foreground">Acompanhamentos</h1>
+      <h1 className="font-display mt-3 text-3xl font-semibold leading-tight tracking-tight text-foreground">Acompanhamentos</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Participantes que precisam de atenção agora
       </p>
-      <div className="mt-4">
-        <AcompanhamentoExplainer />
-      </div>
-      <div className="mt-4">
-        <AttentionList participants={participants} alertsMap={alertsMap} basePath="/minhas-participantes" />
+      <div className="mt-4 flex flex-col gap-4">
+        <SecaoRetratil titulo="Como funciona">
+          <AcompanhamentoExplainer />
+        </SecaoRetratil>
+        <SecaoRetratil titulo="Precisam de atenção">
+          <AttentionList participants={participants} alertsMap={alertsMap} basePath="/minhas-participantes" />
+        </SecaoRetratil>
       </div>
     </div>
   );

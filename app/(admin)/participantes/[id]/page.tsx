@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Pencil } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { getParticipant, getParticipantTimeline } from "@/lib/services/participants.service";
 import { PARTICIPANT_STATUS_BADGE, PARTICIPANT_STATUS_LABELS } from "@/lib/participant-status-labels";
 import { Timeline } from "@/components/participantes/timeline";
@@ -42,12 +43,12 @@ export default async function ParticipantePage({
   const alerts = alertsMap.get(id);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <BackLink href="/participantes" label="Participantes" />
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-semibold text-foreground">{participant.full_name}</h1>
+            <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground">{participant.full_name}</h1>
             <span
               className={`rounded-full px-2.5 py-1 text-xs font-medium ${PARTICIPANT_STATUS_BADGE[participant.status]}`}
             >
@@ -99,14 +100,15 @@ export default async function ParticipantePage({
       ) : (
         <>
           <ContactButtons whatsapp={participant.whatsapp} phone={participant.phone} />
-          <VisitorCard
-            participantId={participant.id}
-            isVisitor={participant.is_visitor}
-            markedAt={participant.visitor_marked_at}
-            contactConfirmedAt={participant.visitor_contact_confirmed_at}
-          />
-          <Card className="p-6">
-            <p className="text-sm font-semibold text-foreground">Informações</p>
+          <SecaoRetratil titulo="Visitante">
+            <VisitorCard
+              participantId={participant.id}
+              isVisitor={participant.is_visitor}
+              markedAt={participant.visitor_marked_at}
+              contactConfirmedAt={participant.visitor_contact_confirmed_at}
+            />
+          </SecaoRetratil>
+          <SecaoRetratil titulo="Informações">
             <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
               <Info label="Telefone" value={participant.phone} />
               <Info label="WhatsApp" value={participant.whatsapp} />
@@ -117,13 +119,12 @@ export default async function ParticipantePage({
               <Info label="Igreja" value={churchSummary(participant)} />
               <Info label="Data de inscrição" value={new Date(participant.enrollment_date).toLocaleDateString("pt-BR")} />
             </dl>
-          </Card>
+          </SecaoRetratil>
         </>
       )}
 
       {!participant.anonymized_at && (
-        <Card className="p-6">
-          <p className="mb-3 text-sm font-semibold text-foreground">Acesso ao sistema</p>
+        <SecaoRetratil titulo="Acesso ao sistema">
           {participant.profile_id ? (
             <p className="text-sm text-muted-foreground">
               Acesso ativo — {participant.account?.email ?? "e-mail não encontrado"}
@@ -145,32 +146,28 @@ export default async function ParticipantePage({
               antes de pedir para ela criar o acesso.
             </p>
           )}
-        </Card>
+        </SecaoRetratil>
       )}
 
-      <Card className="p-6">
-        <p className="text-sm font-semibold text-foreground">Jornada</p>
+      <SecaoRetratil titulo="Jornada">
         <div className="mt-3">
           <Timeline entries={timeline} />
         </div>
-      </Card>
+      </SecaoRetratil>
 
-      <Card className="p-6">
-        <p className="mb-3 text-sm font-semibold text-foreground">Presença</p>
+      <SecaoRetratil titulo="Presença">
         <AttendanceHistory history={attendance} />
-      </Card>
+      </SecaoRetratil>
 
       {!participant.anonymized_at && (
-        <Card className="p-6">
-          <p className="mb-3 text-sm font-semibold text-foreground">Registrar acompanhamento</p>
+        <SecaoRetratil titulo="Registrar acompanhamento">
           <FollowUpForm participantId={id} basePath="/participantes" />
-        </Card>
+        </SecaoRetratil>
       )}
 
-      <Card className="p-6">
-        <p className="mb-3 text-sm font-semibold text-foreground">Acompanhamentos</p>
+      <SecaoRetratil titulo="Acompanhamentos">
         <FollowUpsList followUps={followUps} manage={{ participantId: id, basePath: "/participantes" }} />
-      </Card>
+      </SecaoRetratil>
 
       {!participant.anonymized_at && <AdminPanel participant={participant} />}
     </div>

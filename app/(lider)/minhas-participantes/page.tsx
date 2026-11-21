@@ -5,6 +5,7 @@ import { getMyLeaderContext } from "@/lib/services/leaders.service";
 import { ParticipantsFilters } from "@/components/participantes/participants-filters";
 import { ParticipantsTable } from "@/components/participantes/participants-table";
 import { computeAttentionAlerts } from "@/lib/services/followup.service";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { Pagination } from "@/components/ui/Pagination";
 import { BackLink } from "@/components/ui/BackLink";
 import type { Enums } from "@/types/database.types";
@@ -44,7 +45,7 @@ export default async function MinhasParticipantesPage({
           <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground">Minhas participantes</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {leader
-              ? `${result?.total ?? 0} participantes sob sua responsabilidade`
+              ? "Mulheres sob a sua responsabilidade"
               : "Sua conta ainda não está vinculada a um café."}
           </p>
         </div>
@@ -58,21 +59,26 @@ export default async function MinhasParticipantesPage({
       </div>
 
       <div className="mt-4">
-        <ParticipantsFilters variant="lider" defaults={params} />
-      </div>
-
-      <div className="mt-4">
-        <ParticipantsTable participants={participants} basePath="/minhas-participantes" alertsMap={alertsMap} />
-        {result && (
-          <Pagination
-            basePath="/minhas-participantes"
-            params={params}
-            page={result.page}
-            totalPages={result.totalPages}
-            total={result.total}
-            pageSize={result.pageSize}
-          />
-        )}
+        <SecaoRetratil
+          titulo="Participantes"
+          contador={result?.total ?? 0}
+          abertoPorPadrao={Object.values(params).some(Boolean)}
+        >
+          <div className="flex flex-col gap-4">
+            <ParticipantsFilters variant="lider" defaults={params} />
+            <ParticipantsTable participants={participants} basePath="/minhas-participantes" alertsMap={alertsMap} />
+            {result && (
+              <Pagination
+                basePath="/minhas-participantes"
+                params={params}
+                page={result.page}
+                totalPages={result.totalPages}
+                total={result.total}
+                pageSize={result.pageSize}
+              />
+            )}
+          </div>
+        </SecaoRetratil>
       </div>
     </div>
   );

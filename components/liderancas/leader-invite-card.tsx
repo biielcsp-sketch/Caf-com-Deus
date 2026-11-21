@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@/components/ui/Card";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 
 // Link de inscrição da líder. Qualquer pessoa com o link pode se inscrever —
 // membra do café dela ou nova — e já entra direto no café dela.
@@ -35,14 +35,12 @@ export function LeaderInviteCard({
   }
 
   return (
-    <Card className="flex flex-col gap-4 p-5">
-      <div>
-        <p className="text-sm font-semibold text-foreground">Seu link de inscrição</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Envie para as mulheres do seu café e para quem quiser participar. Quem se inscrever por
-          ele entra direto no seu café{groupName ? ` (${groupName})` : ""}.
-        </p>
-      </div>
+    <SecaoRetratil titulo="Convidar para o café">
+      <div className="flex flex-col gap-4">
+      <p className="text-sm text-muted-foreground">
+        Envie para as mulheres do seu café e para quem quiser participar. Quem se inscrever por ele
+        entra direto no seu café{groupName ? ` (${groupName})` : ""}.
+      </p>
 
       <div className="flex flex-col items-center gap-3">
         {/* eslint-disable-next-line @next/next/no-img-element -- gerado dinamicamente pelo Route Handler */}
@@ -71,6 +69,7 @@ export function LeaderInviteCard({
           Enviar pelo WhatsApp
         </button>
       </div>
-    </Card>
+      </div>
+    </SecaoRetratil>
   );
 }

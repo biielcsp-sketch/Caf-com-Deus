@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import type { listMeetings } from "@/lib/services/meetings.service";
 
 type Meeting = Awaited<ReturnType<typeof listMeetings>>[number];
@@ -37,6 +38,7 @@ export function MeetingsList({ meetings, basePath }: { meetings: Meeting[]; base
 
   return (
     <div className="flex flex-col gap-2">
+      <SecaoRetratil titulo="Totais">
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[
           { label: "Realizados", value: realizados.length },
@@ -50,6 +52,7 @@ export function MeetingsList({ meetings, basePath }: { meetings: Meeting[]; base
           </div>
         ))}
       </div>
+      </SecaoRetratil>
       {meetings.map((m) => {
         const pendente = chamadaPendente(m);
         return (

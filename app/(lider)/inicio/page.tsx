@@ -109,46 +109,21 @@ export default async function InicioPage() {
       </section>
 
       {data.lastMeeting && data.lastMeetingSummary && (
-        <Card className="p-4">
-          <div className="flex items-baseline justify-between gap-3">
+        <Card className="flex items-center justify-between gap-3 p-4">
+          <div className="min-w-0">
             <h2 className="font-display text-lg font-semibold text-foreground">Último encontro</h2>
-            <span className="truncate text-xs text-muted-foreground">
-              {data.lastMeeting.title} ·{" "}
-              {new Date(`${data.lastMeeting.date}T00:00:00`).toLocaleDateString("pt-BR")}
-            </span>
-          </div>
-          {data.lastMeetingSummary.registradas === 0 ? (
-            <p className="mt-3 text-sm text-muted-foreground">
-              A chamada deste encontro ainda não foi feita — por isso não há presentes nem ausentes.
+            <p className="mt-0.5 truncate text-sm text-muted-foreground">
+              {data.lastMeetingSummary.registradas === 0
+                ? "Chamada ainda não feita"
+                : `${data.lastMeetingSummary.presentes} presentes · ${data.lastMeetingSummary.ausentes} ausentes`}
             </p>
-          ) : (
-            <div className="mt-3 grid grid-cols-3 gap-2.5">
-              <div className="rounded-2xl bg-[#e3efdf] px-2.5 py-3">
-                <p className="font-display text-[28px] font-semibold leading-none text-primary">
-                  {data.lastMeetingSummary.presentes}
-                </p>
-                <p className="mt-1.5 text-xs text-[#4a3f38]">presentes</p>
-              </div>
-              <div className="rounded-2xl bg-[#f7e3de] px-2.5 py-3">
-                <p className="font-display text-[28px] font-semibold leading-none text-[#9c3523]">
-                  {data.lastMeetingSummary.ausentes}
-                </p>
-                <p className="mt-1.5 text-xs text-[#4a3f38]">ausentes</p>
-              </div>
-              <div className="rounded-2xl bg-[#f5e8d0] px-2.5 py-3">
-                <p className="font-display text-[28px] font-semibold leading-none text-[#7a5a1f]">
-                  {data.lastMeetingSummary.justificaram}
-                </p>
-                <p className="mt-1.5 text-xs text-[#4a3f38]">justificaram</p>
-              </div>
-            </div>
-          )}
+          </div>
           {data.lastMeetingSummary.registradas < data.lastMeetingSummary.vinculadas && (
             <Link
               href={`/meus-encontros/${data.lastMeeting.id}/presenca`}
-              className="mt-3 inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground"
+              className="inline-flex h-11 shrink-0 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground"
             >
-              Fazer chamada ({data.lastMeetingSummary.registradas}/{data.lastMeetingSummary.vinculadas})
+              Fazer chamada
             </Link>
           )}
         </Card>
@@ -156,20 +131,22 @@ export default async function InicioPage() {
 
       {invite && <LeaderInviteCard code={invite.code} groupName={invite.groupName} />}
 
-      <Card className="p-4">
-        <h2 className="font-display text-lg font-semibold text-foreground">Acompanhamentos</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {data.needingAttention === 0
-            ? "Nenhuma participante precisa de atenção agora."
-            : `${data.needingAttention} participante(s) faltaram ao último encontro.`}
-        </p>
-        <Link
-          href="/meus-acompanhamentos"
-          className="mt-3 inline-flex h-11 items-center rounded-full border border-border bg-card px-5 text-sm font-semibold text-foreground"
-        >
-          Ver acompanhamentos
-        </Link>
-      </Card>
+      {data.needingAttention > 0 && (
+        <Card className="flex items-center justify-between gap-3 p-4">
+          <div className="min-w-0">
+            <h2 className="font-display text-lg font-semibold text-foreground">Acompanhamentos</h2>
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              {data.needingAttention} faltaram ao último encontro
+            </p>
+          </div>
+          <Link
+            href="/meus-acompanhamentos"
+            className="inline-flex h-11 shrink-0 items-center rounded-full border border-border bg-card px-5 text-sm font-semibold text-foreground"
+          >
+            Ver
+          </Link>
+        </Card>
+      )}
     </div>
   );
 }

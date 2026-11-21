@@ -9,6 +9,7 @@ import { markAllNotificationsReadAction } from "@/app/actions/notifications";
 import { RoleShell, homePathFor } from "@/components/role-shell";
 import { BackLink } from "@/components/ui/BackLink";
 import { Card } from "@/components/ui/Card";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 
 function quando(iso: string) {
   return new Date(iso).toLocaleString("pt-BR", {
@@ -31,11 +32,11 @@ export default async function NotificacoesPage() {
 
   return (
     <RoleShell profile={profile} avatarUrl={avatarUrl}>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
         <BackLink href={home.href} label={home.label} />
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-foreground">Notificações</h1>
+            <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground">Notificações</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               {naoLidas > 0 ? `${naoLidas} não lida(s).` : "Tudo lido."}
             </p>
@@ -60,6 +61,8 @@ export default async function NotificacoesPage() {
           </Card>
         )}
 
+        {itens.length > 0 && (
+        <SecaoRetratil titulo="Notificações" contador={itens.length} abertoPorPadrao={naoLidas > 0}>
         <ul className="flex flex-col gap-2">
           {itens.map((n) => {
             const conteudo = (
@@ -88,6 +91,8 @@ export default async function NotificacoesPage() {
             );
           })}
         </ul>
+        </SecaoRetratil>
+        )}
       </div>
     </RoleShell>
   );

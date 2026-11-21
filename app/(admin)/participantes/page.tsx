@@ -8,6 +8,7 @@ import {
 import { ParticipantsFilters } from "@/components/participantes/participants-filters";
 import { ParticipantsTable } from "@/components/participantes/participants-table";
 import { computeAttentionAlerts } from "@/lib/services/followup.service";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { Pagination } from "@/components/ui/Pagination";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { BackLink } from "@/components/ui/BackLink";
@@ -54,7 +55,7 @@ export default async function ParticipantesPage({
   return (
     <div>
       <BackLink href="/dashboard" label="Dashboard" />
-      <PageHeader title="Participantes" description={`${result.total} ${result.total === 1 ? "encontrada" : "encontradas"}`}>
+      <PageHeader title="Participantes" description="Cadastro e acompanhamento">
         <Link
           href="/participantes/novo"
           aria-label="Nova participante"
@@ -65,24 +66,29 @@ export default async function ParticipantesPage({
       </PageHeader>
 
       <div className="mt-4">
-        <ParticipantsFilters variant="admin" leaders={leaders} groups={groups} defaults={params} />
-      </div>
-
-      <div className="mt-4">
-        <ParticipantsTable
-          participants={participants}
-          basePath="/participantes"
-          alertsMap={alertsMap}
-          canManage
-        />
-        <Pagination
-          basePath="/participantes"
-          params={params}
-          page={result.page}
-          totalPages={result.totalPages}
-          total={result.total}
-          pageSize={result.pageSize}
-        />
+        <SecaoRetratil
+          titulo="Participantes"
+          contador={result.total}
+          abertoPorPadrao={Object.values(params).some(Boolean)}
+        >
+          <div className="flex flex-col gap-4">
+            <ParticipantsFilters variant="admin" leaders={leaders} groups={groups} defaults={params} />
+            <ParticipantsTable
+              participants={participants}
+              basePath="/participantes"
+              alertsMap={alertsMap}
+              canManage
+            />
+            <Pagination
+              basePath="/participantes"
+              params={params}
+              page={result.page}
+              totalPages={result.totalPages}
+              total={result.total}
+              pageSize={result.pageSize}
+            />
+          </div>
+        </SecaoRetratil>
       </div>
     </div>
   );

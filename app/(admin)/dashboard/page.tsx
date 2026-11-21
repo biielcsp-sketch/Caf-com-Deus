@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/Card";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { BarList } from "@/components/dashboard/bar-list";
 import { BackButton } from "@/components/ui/BackButton";
@@ -21,7 +21,7 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <BackButton />
       <div>
         <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground">Dashboard</h1>
@@ -49,9 +49,8 @@ export default async function DashboardPage() {
         </p>
       </section>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-3 gap-3">
         <StatCard label="Aguardando distribuição" value={data.awaitingDistribution} />
-        <StatCard label="Encontros no mês" value={data.meetingsThisMonth} />
         <StatCard
           label="Presença média"
           value={data.averageAttendance !== null ? `${data.averageAttendance}%` : "—"}
@@ -59,34 +58,27 @@ export default async function DashboardPage() {
         <StatCard label="Precisam de contato" value={data.needingAttention} />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Card className="p-5">
-          <h2 className="font-display mb-3 text-lg font-semibold text-foreground">Participantes por região</h2>
-          <BarList items={data.byRegion} />
-        </Card>
-        <Card className="p-5">
-          <h2 className="font-display mb-3 text-lg font-semibold text-foreground">Participantes por líder</h2>
-          <BarList items={data.byLeader} />
-        </Card>
-        <Card className="p-5">
-          <h2 className="font-display mb-3 text-lg font-semibold text-foreground">Ocupação por grupo</h2>
-          <BarList
-            items={data.byGroup.map((g) => ({ label: `${g.name} (${g.occupied}/${g.capacity})`, count: g.occupied }))}
-          />
-        </Card>
-        <Card className="p-5">
-          <h2 className="font-display mb-3 text-lg font-semibold text-foreground">Frequência (geral)</h2>
-          <BarList
-            items={data.attendanceBreakdown
-              .filter((a) => ATTENDANCE_LABELS[a.label])
-              .map((a) => ({ label: ATTENDANCE_LABELS[a.label], count: a.count }))}
-          />
-        </Card>
-        <Card className="p-5 lg:col-span-2">
-          <h2 className="font-display mb-3 text-lg font-semibold text-foreground">Evolução mensal de inscrições</h2>
-          <BarList items={data.monthlyEvolution.map((m) => ({ label: m.label, count: m.count }))} />
-        </Card>
-      </div>
+      <SecaoRetratil titulo="Participantes por região" contador={data.byRegion.length}>
+        <BarList items={data.byRegion} />
+      </SecaoRetratil>
+      <SecaoRetratil titulo="Participantes por líder" contador={data.byLeader.length}>
+        <BarList items={data.byLeader} />
+      </SecaoRetratil>
+      <SecaoRetratil titulo="Ocupação por grupo" contador={data.byGroup.length}>
+        <BarList
+          items={data.byGroup.map((g) => ({ label: `${g.name} (${g.occupied}/${g.capacity})`, count: g.occupied }))}
+        />
+      </SecaoRetratil>
+      <SecaoRetratil titulo="Frequência (geral)">
+        <BarList
+          items={data.attendanceBreakdown
+            .filter((a) => ATTENDANCE_LABELS[a.label])
+            .map((a) => ({ label: ATTENDANCE_LABELS[a.label], count: a.count }))}
+        />
+      </SecaoRetratil>
+      <SecaoRetratil titulo="Evolução mensal de inscrições">
+        <BarList items={data.monthlyEvolution.map((m) => ({ label: m.label, count: m.count }))} />
+      </SecaoRetratil>
     </div>
   );
 }

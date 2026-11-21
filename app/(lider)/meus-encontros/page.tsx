@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { Plus } from "lucide-react";
 import { listMeetings } from "@/lib/services/meetings.service";
 import { getMyLeaderContext } from "@/lib/services/leaders.service";
 import { MeetingsList } from "@/components/encontros/meetings-list";
+import { RoundAddLink } from "@/components/ui/RoundAddLink";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { BackLink } from "@/components/ui/BackLink";
 
@@ -19,16 +19,12 @@ export default async function EncontrosPage() {
     <div>
       <BackLink href="/inicio" label="Início" />
       <PageHeader title="Encontros">
-        <Link
-          href="/meus-encontros/novo"
-          className="flex items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
-        >
-          <Plus size={16} />
-          Novo encontro
-        </Link>
+        <RoundAddLink href="/meus-encontros/novo" label="Novo encontro" />
       </PageHeader>
       <div className="mt-4">
-        <MeetingsList meetings={meetings} basePath="/meus-encontros" />
+        <SecaoRetratil titulo="Encontros" contador={meetings.length}>
+          <MeetingsList meetings={meetings} basePath="/meus-encontros" />
+        </SecaoRetratil>
       </div>
     </div>
   );
