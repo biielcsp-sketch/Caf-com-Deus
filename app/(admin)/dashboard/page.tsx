@@ -1,6 +1,7 @@
 import { StatCard } from "@/components/dashboard/stat-card";
 import { DashboardIndicadores } from "@/components/dashboard/dashboard-indicadores";
 import { BackButton } from "@/components/ui/BackButton";
+import { getMyDashboardIndicadores } from "@/lib/services/dashboard-preferences.service";
 import { getAdminDashboard } from "@/lib/services/dashboard.service";
 import { listPendingContacts } from "@/lib/services/contact-alerts.service";
 import { PendingContactsCard } from "@/components/acompanhamento/pending-contacts-card";
@@ -14,9 +15,10 @@ const ATTENDANCE_LABELS: Record<string, string> = {
 };
 
 export default async function DashboardPage() {
-  const [data, semContato] = await Promise.all([
+  const [data, semContato, escolhidos] = await Promise.all([
     getAdminDashboard(),
     listPendingContacts({ somenteAtrasados: true }).catch(() => []),
+    getMyDashboardIndicadores().catch(() => []),
   ]);
 
   return (
@@ -58,6 +60,7 @@ export default async function DashboardPage() {
       </div>
 
       <DashboardIndicadores
+        escolhidosIniciais={escolhidos}
         paineis={[
           { id: "regiao", titulo: "Por região", contador: data.byRegion.length, items: data.byRegion },
           { id: "lider", titulo: "Por líder", contador: data.byLeader.length, items: data.byLeader },

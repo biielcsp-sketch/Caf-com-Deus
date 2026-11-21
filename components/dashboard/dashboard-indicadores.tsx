@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { Check, SlidersHorizontal, X } from "lucide-react";
 import { BarList } from "@/components/dashboard/bar-list";
+import { saveDashboardIndicadoresAction } from "@/app/actions/dashboard-preferences";
 
 export type Painel = {
   id: string;
@@ -13,41 +14,21 @@ export type Painel = {
 
 export type Indicador = { id: string; titulo: string; valor: string | number };
 
-const CHAVE = "dashboard-indicadores";
-const EVENTO = "dashboard-indicadores-mudou";
-
-function assinar(cb: () => void) {
-  window.addEventListener(EVENTO, cb);
-  return () => window.removeEventListener(EVENTO, cb);
-}
-
-function lerSalvo() {
-  try {
-    return localStorage.getItem(CHAVE) ?? "[]";
-  } catch {
-    return "[]";
-  }
-}
-
 // Os 5 painéis viram botões; ao tocar, abre o conteúdo numa janela.
-// O 6º botão deixa escolher indicadores extras (guardados neste aparelho).
+// O 6º botão deixa escolher indicadores extras (guardados na conta).
 export function DashboardIndicadores({
   paineis,
   indicadores,
+  escolhidosIniciais,
 }: {
   paineis: Painel[];
   indicadores: Indicador[];
+  escolhidosIniciais: string[];
 }) {
   const [aberto, setAberto] = useState<string | null>(null);
-  const salvo = useSyncExternalStore(assinar, lerSalvo, () => "[]");
-  const escolhidos = useMemo<string[]>(() => {
-    try {
-      const v = JSON.parse(salvo);
-      return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
-    } catch {
-      return [];
-    }
-  }, [salvo]);
+  const [escolhidos, setEscolhidos] = useState<string[]>(escolhidosIniciais);
+  const [erro, setErro] = useState<string | null>(null);
+  const [, startTransition] = useTransition();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -58,13 +39,17 @@ export function DashboardIndicadores({
   }, [aberto]);
 
   function alternar(id: string) {
-    const novo = escolhidos.includes(id) ? escolhidos.filter((x) => x !== id) : [...escolhidos, id];
-    try {
-      localStorage.setItem(CHAVE, JSON.stringify(novo));
-      window.dispatchEvent(new Event(EVENTO));
-    } catch {
-      /* sem armazenamento: não personaliza */
-    }
+    const anterior = escolhidos;
+    const novo = anterior.includes(id) ? anterior.filter((x) => x !== id) : [...anterior, id];
+    setEscolhidos(novo);
+    setErro(null);
+    startTransition(async () => {
+      const r = await saveDashboardIndicadoresAction(novo);
+      if (r.error) {
+        setEscolhidos(anterior);
+        setErro(r.error);
+      }
+    });
   }
 
   const painel = paineis.find((p) => p.id === aberto);
@@ -133,6 +118,7 @@ export function DashboardIndicadores({
           {aberto === "personalizar" ? (
             <div className="flex flex-col gap-2">
               <p className="text-sm text-muted-foreground">Escolha os indicadores que aparecem no Dashboard.</p>
+              {erro && <p className="text-sm text-danger">{erro}</p>}
               {indicadores.map((i) => {
                 const ativo = escolhidos.includes(i.id);
                 return (
