@@ -32,30 +32,32 @@ function Tabela({
       {linhas.length === 0 ? (
         <p className="text-sm text-muted-foreground">{vazio}</p>
       ) : (
-        <div className="max-h-[28rem] overflow-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="sticky top-0 bg-card text-xs text-muted-foreground">
-              <tr>
-                {colunas.map((c, i) => (
-                  <th key={c} className={`py-2 pr-3 font-medium ${i > 0 ? "text-right" : ""}`}>
-                    {c}
-                  </th>
+        <ul className="flex max-h-[28rem] flex-col gap-2 overflow-y-auto">
+          {linhas.map((l, i) => {
+            const numeros = l.slice(1).map((v, j) => ({ v, rotulo: colunas[j + 1] })).filter((x) => typeof x.v === "number");
+            const textos = l.slice(1).map((v, j) => ({ v, rotulo: colunas[j + 1] })).filter((x) => typeof x.v !== "number");
+            return (
+              <li key={i} className="glass-inner rounded-2xl px-4 py-3">
+                <p className="break-words text-sm font-medium text-foreground">{l[0]}</p>
+                {textos.map((t) => (
+                  <p key={t.rotulo} className="mt-0.5 break-words text-xs text-muted-foreground">
+                    {t.rotulo}: {t.v}
+                  </p>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              {linhas.map((l, i) => (
-                <tr key={i} className="border-t border-border/60">
-                  {l.map((v, j) => (
-                    <td key={j} className={`py-1.5 pr-3 ${j > 0 ? "text-right tabular-nums" : "text-foreground"}`}>
-                      {v}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                {numeros.length > 0 && (
+                  <dl className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
+                    {numeros.map((n) => (
+                      <div key={n.rotulo} className="flex items-baseline gap-1.5">
+                        <dd className="font-display text-base font-semibold tabular-nums text-foreground">{n.v}</dd>
+                        <dt className="text-[11px] text-muted-foreground">{n.rotulo}</dt>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       )}
     </SecaoRetratil>
   );

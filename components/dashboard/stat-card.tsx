@@ -11,9 +11,9 @@ export function StatCard({
   href?: string;
 }) {
   const corpo = (
-    <Card className="p-4">
+    <Card className="min-w-0 p-3.5">
       <p className="font-display text-2xl font-semibold leading-none text-foreground">{value}</p>
-      <p className="mt-2 text-[11px] leading-tight text-muted-foreground">{label}</p>
+      <p className="mt-2 break-words text-[10.5px] leading-tight text-muted-foreground">{label}</p>
     </Card>
   );
   if (!href) return corpo;
