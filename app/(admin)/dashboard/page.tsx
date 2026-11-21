@@ -14,12 +14,9 @@ const ATTENDANCE_LABELS: Record<string, string> = {
   justificou: "Justificaram",
 };
 
-// % de presentes sobre todos os registros de frequência (só os 3 status conhecidos).
-function pctPresentes(lista: { label: string; count: number }[]): string {
-  const validos = lista.filter((a) => ATTENDANCE_LABELS[a.label]);
-  const total = validos.reduce((soma, a) => soma + a.count, 0);
-  const presentes = validos.find((a) => a.label === "presente")?.count ?? 0;
-  return total > 0 ? `${Math.round((presentes / total) * 100)}%` : "—";
+// Total de registros de frequência (só os 3 status conhecidos).
+function totalRegistros(lista: { label: string; count: number }[]): number {
+  return lista.filter((a) => ATTENDANCE_LABELS[a.label]).reduce((soma, a) => soma + a.count, 0);
 }
 
 export default async function DashboardPage() {
@@ -81,7 +78,8 @@ export default async function DashboardPage() {
           {
             id: "frequencia",
             titulo: "Frequência",
-            contador: pctPresentes(data.attendanceBreakdown),
+            contador: totalRegistros(data.attendanceBreakdown),
+            legenda: "registros",
             items: data.attendanceBreakdown
               .filter((a) => ATTENDANCE_LABELS[a.label])
               .map((a) => ({ label: ATTENDANCE_LABELS[a.label], count: a.count })),
@@ -89,15 +87,28 @@ export default async function DashboardPage() {
           {
             id: "inscricoes",
             titulo: "Inscrições por mês",
-            contador: data.monthlyEvolution.reduce((soma, m) => soma + m.count, 0),
+            contador: data.monthlyEvolution.at(-1)?.count ?? 0,
+            legenda: "neste mês",
             items: data.monthlyEvolution.map((m) => ({ label: m.label, count: m.count })),
           },
         ]}
         indicadores={[
           { id: "encontros-mes", titulo: "Encontros no mês", valor: data.meetingsThisMonth },
-          { id: "ativas", titulo: "Participantes ativas", valor: data.activeParticipants },
-          { id: "lideres", titulo: "Líderes ativas", valor: data.activeLeaders },
-          { id: "total", titulo: "Total de participantes", valor: data.totalParticipants },
+          {
+            id: "vagas-livres",
+            titulo: "Vagas livres nos cafés",
+            valor: data.byGroup.reduce((soma, g) => soma + Math.max(g.capacity - g.occupied, 0), 0),
+          },
+          {
+            id: "cafes-lotados",
+            titulo: "Cafés lotados",
+            valor: data.byGroup.filter((g) => g.occupied >= g.capacity).length,
+          },
+          {
+            id: "ausencias",
+            titulo: "Ausências registradas",
+            valor: data.attendanceBreakdown.find((a) => a.label === "ausente")?.count ?? 0,
+          },
         ]}
       />
     </div>

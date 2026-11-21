@@ -9,6 +9,7 @@ export type Painel = {
   id: string;
   titulo: string;
   contador?: number | string;
+  legenda?: string;
   items: { label: string; count: number }[];
 };
 
@@ -67,8 +68,11 @@ export function DashboardIndicadores({
           >
             <span className="text-sm font-semibold leading-tight text-primary">{p.titulo}</span>
             {p.contador !== undefined && (
-              <span className="font-display text-2xl font-semibold leading-none text-foreground">
-                {p.contador}
+              <span className="flex items-baseline gap-1.5">
+                <span className="font-display text-2xl font-semibold leading-none text-foreground">
+                  {p.contador}
+                </span>
+                {p.legenda && <span className="text-[11px] text-muted-foreground">{p.legenda}</span>}
               </span>
             )}
           </button>
