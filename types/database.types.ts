@@ -346,6 +346,24 @@ export type Database = {
           },
         ]
       }
+      dashboard_preferences: {
+        Row: {
+          indicadores: string[]
+          profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          indicadores?: string[]
+          profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          indicadores?: string[]
+          profile_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       enrollment_sources: {
         Row: {
           active: boolean
