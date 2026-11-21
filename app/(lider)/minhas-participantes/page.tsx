@@ -34,9 +34,9 @@ export default async function MinhasParticipantesPage({
   return (
     <div>
       <BackLink href="/inicio" label="Início" />
-      <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
+      <div className="mt-3 flex items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">Minhas participantes</h1>
+          <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground">Minhas participantes</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {leader
               ? `${participants.length} participantes sob sua responsabilidade`
@@ -45,10 +45,10 @@ export default async function MinhasParticipantesPage({
         </div>
         <Link
           href="/minhas-participantes/nova"
-          className="flex items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
+          aria-label="Nova participante"
+          className="glass-green flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
         >
-          <Plus size={16} />
-          Nova participante
+          <Plus size={22} strokeWidth={2.2} />
         </Link>
       </div>
 

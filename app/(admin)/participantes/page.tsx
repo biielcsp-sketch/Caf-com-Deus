@@ -48,13 +48,13 @@ export default async function ParticipantesPage({
   return (
     <div>
       <BackLink href="/dashboard" label="Dashboard" />
-      <PageHeader title="Participantes" description={`${participants.length} encontradas`}>
+      <PageHeader title="Participantes" description={`${participants.length} ${participants.length === 1 ? "encontrada" : "encontradas"}`}>
         <Link
           href="/participantes/novo"
-          className="flex items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
+          aria-label="Nova participante"
+          className="glass-green flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
         >
-          <Plus size={16} />
-          Nova participante
+          <Plus size={22} strokeWidth={2.2} />
         </Link>
       </PageHeader>
 
