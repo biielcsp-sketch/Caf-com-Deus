@@ -25,6 +25,7 @@ import {
   History,
 } from "lucide-react";
 import { NavLink } from "@/components/nav-link";
+import { BottomNav } from "@/components/bottom-nav";
 import { NotificationBellIcon, NotificationsNavItem } from "@/components/notification-bell";
 import { SidebarIdentity } from "@/components/ui/SidebarIdentity";
 import { logout } from "@/app/actions/auth";
@@ -190,7 +191,12 @@ export function AdminShell({
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-8">{children}</main>
+        <main className="flex-1 p-4 pb-32 md:p-8">{children}</main>
+
+        <BottomNav
+          items={[NAV_ITEMS[0], NAV_ITEMS[3], NAV_ITEMS[2], NAV_ITEMS[6]]}
+          onMenu={() => setMenuOpen(true)}
+        />
       </div>
     </div>
   );

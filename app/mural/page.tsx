@@ -10,6 +10,7 @@ import { MediaUpload } from "@/components/mural/media-upload";
 import { MediaCard } from "@/components/mural/media-card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 
 // Mural: fotos e vídeos dos cafés. Todas veem; publicam a líder, a
 // co-líder e a admin. Os arquivos ficam no Google Drive — aqui só passa
@@ -106,7 +107,9 @@ export default async function MuralPage() {
         )}
 
         {postableGroups.length > 0 ? (
-          <MediaUpload postableGroups={postableGroups} />
+          <SecaoRetratil titulo="Publicar no mural">
+            <MediaUpload postableGroups={postableGroups} />
+          </SecaoRetratil>
         ) : (
           deveriaPublicar && (
             <Card className="flex flex-col gap-2 p-5">

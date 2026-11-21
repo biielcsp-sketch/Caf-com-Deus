@@ -171,9 +171,8 @@ export function MediaUpload({
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5"
+      className="flex flex-col gap-4"
     >
-      <p className="text-sm font-semibold text-foreground">Publicar no mural</p>
 
       {postableGroups.length === 1 ? (
         <input type="hidden" name="group_id" value={postableGroups[0].id} />
@@ -190,7 +189,6 @@ export function MediaUpload({
       )}
 
       <div className="flex flex-col gap-1.5">
-        <p className={labelClass}>{files.length > 1 ? "Fotos" : "Foto ou vídeo"}</p>
         {/* Sem `required` no input: ele está escondido dentro do seletor, e
             navegador não valida campo que não dá para focar — quem barra o
             envio sem arquivo é a checagem no handleSubmit. */}
@@ -201,13 +199,19 @@ export function MediaUpload({
           onRemove={handleRemove}
           disabled={enviando}
           allowMore={podeAdicionarMais}
-          hint={`Até ${MAX_IMAGENS_POR_PUBLICACAO} fotos (${MAX_IMAGE_MB}MB cada) num carrossel, ou 1 vídeo (até ${MAX_VIDEO_MB}MB) por vez.`}
+          hint={`Até ${MAX_IMAGENS_POR_PUBLICACAO} fotos ou 1 vídeo`}
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className={labelClass} htmlFor="caption">Legenda (opcional)</label>
-        <input id="caption" name="caption" maxLength={300} className={inputClass} />
+        <input
+          id="caption"
+          name="caption"
+          maxLength={300}
+          placeholder="Escreva uma legenda…"
+          aria-label="Legenda (opcional)"
+          className={inputClass}
+        />
       </div>
 
       {enviando && (
