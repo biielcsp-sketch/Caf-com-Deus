@@ -12,6 +12,11 @@ updates:
     groups:
       dependencias-menores:
         update-types: [minor, patch]
+    # Saltos de versão grandes (ex.: TypeScript 5→7, ESLint 9→10) quebram o build e são feitos
+    # à mão, num PR próprio. Correções de segurança continuam chegando por aqui normalmente.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
