@@ -1,6 +1,6 @@
-import { Card } from "@/components/ui/Card";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { BarList } from "@/components/dashboard/bar-list";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { BackLink } from "@/components/ui/BackLink";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getReports } from "@/lib/services/reports.service";
@@ -28,8 +28,7 @@ function Tabela({
   vazio?: string;
 }) {
   return (
-    <Card className="p-5">
-      <p className="mb-3 text-sm font-semibold text-foreground">{titulo}</p>
+    <SecaoRetratil titulo={titulo} contador={linhas.length}>
       {linhas.length === 0 ? (
         <p className="text-sm text-muted-foreground">{vazio}</p>
       ) : (
@@ -58,7 +57,7 @@ function Tabela({
           </table>
         </div>
       )}
-    </Card>
+    </SecaoRetratil>
   );
 }
 
@@ -72,7 +71,7 @@ export default async function RelatoriosPage({ searchParams }: { searchParams: P
   const r = await getReports({ from, to });
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <BackLink href="/dashboard" label="Dashboard" />
       <PageHeader
         title="Relatórios"
@@ -96,14 +95,18 @@ export default async function RelatoriosPage({ searchParams }: { searchParams: P
         </button>
       </form>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-3 gap-3">
         <StatCard label="Cafés realizados" value={r.resumo.cafesRealizados} />
-        <StatCard label="Cafés cancelados" value={r.resumo.cafesCancelados} />
         <StatCard label="Total de presenças" value={r.resumo.totalPresencas} />
-        <StatCard label="Participantes únicas" value={r.resumo.participantesUnicas} />
-        <StatCard label="Presenças de visitantes" value={r.resumo.presencasVisitantes} />
         <StatCard label="Acompanhamentos" value={r.resumo.acompanhamentos} />
       </div>
+      <SecaoRetratil titulo="Mais números">
+        <div className="grid grid-cols-3 gap-3">
+          <StatCard label="Cafés cancelados" value={r.resumo.cafesCancelados} />
+          <StatCard label="Participantes únicas" value={r.resumo.participantesUnicas} />
+          <StatCard label="Presenças de visitantes" value={r.resumo.presencasVisitantes} />
+        </div>
+      </SecaoRetratil>
 
       <Tabela
         titulo="Participantes x Cafés"
@@ -130,7 +133,7 @@ export default async function RelatoriosPage({ searchParams }: { searchParams: P
         vazio="Nenhuma visitante presente no período."
       />
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="flex flex-col gap-4">
         <Tabela
           titulo="Participação de cada pessoa"
           colunas={["Participante", "Presenças"]}
@@ -141,14 +144,12 @@ export default async function RelatoriosPage({ searchParams }: { searchParams: P
           colunas={["Participante", "Registros", "Último"]}
           linhas={r.acompanhamentosPorPessoa.map((p) => [p.nome, p.total, fmt(p.ultimo)])}
         />
-        <Card className="p-5">
-          <p className="mb-3 text-sm font-semibold text-foreground">Status dos acompanhamentos</p>
+        <SecaoRetratil titulo="Status dos acompanhamentos">
           <BarList items={r.acompanhamentosPorStatus.map((s) => ({ label: s.label, count: s.value }))} />
-        </Card>
-        <Card className="p-5">
-          <p className="mb-3 text-sm font-semibold text-foreground">Acompanhamentos por tipo</p>
+        </SecaoRetratil>
+        <SecaoRetratil titulo="Acompanhamentos por tipo">
           <BarList items={r.acompanhamentosPorTipo.map((s) => ({ label: s.label, count: s.value }))} />
-        </Card>
+        </SecaoRetratil>
       </div>
     </div>
   );

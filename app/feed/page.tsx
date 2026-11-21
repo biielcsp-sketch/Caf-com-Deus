@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BookOpen, CalendarDays, FileText } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { getCurrentProfile } from "@/lib/services/profiles.service";
 import { getMyAvatarSignedUrl } from "@/lib/services/avatar.service";
 import { getDailyVerse } from "@/lib/services/bible.service";
@@ -11,6 +11,7 @@ import { RoleShell } from "@/components/role-shell";
 import { LatestMedia } from "@/components/feed/latest-media";
 import { StudyMaterialsPanel } from "@/components/estudos/study-materials-panel";
 import { Card } from "@/components/ui/Card";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { hojeEmSaoPaulo } from "@/lib/dates";
 
@@ -54,9 +55,9 @@ export default async function FeedPage() {
 
   return (
     <RoleShell profile={profile} avatarUrl={avatarUrl}>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
         <PageHeader
-          title={`Olá, ${profile.full_name.split(" ")[0]} 🌷`}
+          title={`Olá, ${profile.full_name.split(" ")[0]}`}
           description="O que está acontecendo no Café com Deus Shine."
         />
 
@@ -79,11 +80,7 @@ export default async function FeedPage() {
           </Card>
         )}
 
-        <Card className="p-5">
-          <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
-            <CalendarDays size={16} className="text-primary" />
-            Próximos encontros
-          </p>
+        <SecaoRetratil titulo="Próximos encontros" contador={upcoming.length} abertoPorPadrao>
           {upcoming.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhum encontro agendado no momento.</p>
           ) : (
@@ -105,13 +102,9 @@ export default async function FeedPage() {
               ))}
             </div>
           )}
-        </Card>
+        </SecaoRetratil>
 
-        <Card className="p-5">
-          <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
-            <FileText size={16} className="text-primary" />
-            Tema do mês
-          </p>
+        <SecaoRetratil titulo="Tema do mês">
           {monthMaterials.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               O material deste mês ainda não foi publicado.
@@ -121,7 +114,7 @@ export default async function FeedPage() {
             // aba Estudo do mês, exclusiva da pastora.
             <StudyMaterialsPanel materials={monthMaterials} canManage={false} />
           )}
-        </Card>
+        </SecaoRetratil>
 
         <LatestMedia media={latestMedia} currentProfileId={profile.id} />
       </div>
