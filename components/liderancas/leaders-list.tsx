@@ -50,9 +50,9 @@ export function LeadersList({ leaders }: { leaders: Leader[] }) {
               </span>
               <Link
                 href={`/liderancas/${l.id}`}
-                className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted"
+                className="flex items-center gap-1.5 glass-inner rounded-full px-3 py-1 text-xs font-medium text-foreground"
               >
-                <Pencil size={14} />
+                <Pencil size={13} />
                 Editar
               </Link>
               <LeaderDeleteButton id={l.id} nome={l.full_name} cafes={l.cafes} compact />

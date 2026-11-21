@@ -58,11 +58,11 @@ export function DeleteButton({
         type="button"
         onClick={handleClick}
         disabled={isPending}
-        className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-danger px-3.5 text-sm font-medium text-danger transition-colors hover:bg-danger hover:text-danger-foreground disabled:cursor-not-allowed disabled:opacity-50 ${
-          compact ? "py-1.5" : "py-2"
+        className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border border-danger px-3 text-xs font-medium text-danger transition-colors hover:bg-danger hover:text-danger-foreground disabled:cursor-not-allowed disabled:opacity-50 ${
+          compact ? "py-1" : "py-1.5"
         }`}
       >
-        <Trash2 size={15} />
+        <Trash2 size={13} />
         {isPending ? "Excluindo..." : "Excluir"}
       </button>
       {erro && <p className="max-w-xs text-right text-xs text-danger">{erro}</p>}
