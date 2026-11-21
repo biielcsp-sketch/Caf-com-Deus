@@ -78,64 +78,9 @@ end;
 $$;
 revoke all on function app_guard_participant_self_update() from public, anon, authenticated;
 
--- 3. Visitante: carimbos e aviso para a líder ---------------------------------
-create or replace function app_visitor_stamp()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if new.is_visitor and not old.is_visitor then
-    new.visitor_marked_at := now();
-    new.visitor_contact_confirmed_at := null;
-    new.visitor_reminded_at := null;
-  elsif not new.is_visitor and old.is_visitor then
-    new.visitor_marked_at := null;
-    new.visitor_contact_confirmed_at := null;
-    new.visitor_reminded_at := null;
-  end if;
-  return new;
-end;
-$$;
-revoke all on function app_visitor_stamp() from public, anon, authenticated;
-
-drop trigger if exists participants_visitor_stamp on participants;
-create trigger participants_visitor_stamp
-  before update of is_visitor on participants
-  for each row execute function app_visitor_stamp();
-
-create or replace function app_visitor_notify()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  v_lider_profile uuid;
-begin
-  if new.is_visitor and not old.is_visitor then
-    select l.profile_id into v_lider_profile from leaders l where l.id = new.current_leader_id;
-    if v_lider_profile is not null then
-      insert into notifications (profile_id, type, title, body, link, participant_id)
-      values (v_lider_profile, 'visitante_contato',
-              'Visitante para contatar',
-              coalesce(new.preferred_name, new.full_name) || ' foi marcada como visitante. Entre em contato e confirme no app.',
-              '/minhas-participantes/' || new.id, new.id);
-    end if;
-  elsif not new.is_visitor and old.is_visitor then
-    update notifications set read = true
-     where participant_id = new.id and type in ('visitante_contato', 'visitante_lembrete');
-  end if;
-  return new;
-end;
-$$;
-revoke all on function app_visitor_notify() from public, anon, authenticated;
-
-drop trigger if exists participants_visitor_notify on participants;
-create trigger participants_visitor_notify
-  after update of is_visitor on participants
-  for each row execute function app_visitor_notify();
+-- 3. Visitante: carimbos, aviso à líder e lembrete de 3 dias já existem no banco
+--    (migration 20261030150516_visitante: app_participant_visitor_before/after,
+--    app_remind_visitor_contacts e o cron lembrar-contato-visitantes). Não são recriados aqui.
 
 -- Confirmar o contato com a visitante.
 create or replace function app_confirm_visitor_contact(p_participant_id uuid)
@@ -170,45 +115,6 @@ end;
 $$;
 revoke all on function app_confirm_visitor_contact(uuid) from public, anon;
 grant execute on function app_confirm_visitor_contact(uuid) to authenticated;
-
--- Lembrete: passou de 3 dias sem contato confirmado. Uma vez só por marcação.
-create or replace function app_remind_visitor_contacts()
-returns int
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  r record;
-  v_total int := 0;
-begin
-  for r in
-    select p.id, coalesce(p.preferred_name, p.full_name) as nome, l.profile_id as lider_profile
-      from participants p
-      join leaders l on l.id = p.current_leader_id
-     where p.is_visitor
-       and p.visitor_contact_confirmed_at is null
-       and p.visitor_reminded_at is null
-       and p.visitor_marked_at <= now() - interval '3 days'
-       and p.deleted_at is null
-       and p.anonymized_at is null
-       and l.profile_id is not null
-  loop
-    insert into notifications (profile_id, type, title, body, link, participant_id)
-    values (r.lider_profile, 'visitante_lembrete',
-            'Visitante sem contato há mais de 3 dias',
-            r.nome || ' ainda não foi contatada. Fale com ela e confirme no app.',
-            '/minhas-participantes/' || r.id, r.id);
-    update participants set visitor_reminded_at = now() where id = r.id;
-    v_total := v_total + 1;
-  end loop;
-  return v_total;
-end;
-$$;
-revoke all on function app_remind_visitor_contacts() from public, anon, authenticated;
-
-create extension if not exists pg_cron with schema pg_catalog;
-select cron.schedule('lembrar-contato-visitantes', '5 * * * *', $$select public.app_remind_visitor_contacts()$$);
 
 -- 4. Mudou a situação -> o contato pendente é baixado --------------------------
 create or replace function app_confirm_contact_on_status_change()

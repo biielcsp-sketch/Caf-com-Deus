@@ -10,7 +10,7 @@ select has_column('public', 'participants', 'church_status', 'participants.churc
 select has_column('public', 'participants', 'cep', 'participants.cep existe');
 select has_function('public', 'app_confirm_visitor_contact', array['uuid'], 'confirmar contato de visitante existe');
 select has_trigger('public', 'participants', 'participants_confirm_contact_on_status', 'status baixa o contato pendente');
-select has_trigger('public', 'participants', 'participants_visitor_stamp', 'carimbo de visitante existe');
+select has_trigger('public', 'participants', 'participants_visitor_before', 'carimbo de visitante existe');
 
 select ok(
   not has_function_privilege('anon', 'public.app_confirm_visitor_contact(uuid)', 'execute'),
