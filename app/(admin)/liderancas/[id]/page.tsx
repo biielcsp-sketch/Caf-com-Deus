@@ -1,0 +1,83 @@
+import { notFound } from "next/navigation";
+import { Card } from "@/components/ui/Card";
+import { BackLink } from "@/components/ui/BackLink";
+import { getLeader } from "@/lib/services/leaders.service";
+import { listGroupsHostedByProfile } from "@/lib/services/groups.service";
+import { listParticipants } from "@/lib/services/participants.service";
+import { getMonthlyAttendanceForParticipants } from "@/lib/services/attendance.service";
+import { LeaderEditForm } from "@/components/liderancas/leader-edit-form";
+import { ToggleStatusButton } from "@/components/liderancas/toggle-status-button";
+import { LeaderDeleteButton } from "@/components/liderancas/leader-delete-button";
+import { ParticipantsTable } from "@/components/participantes/participants-table";
+import { ParticipantsAttendanceAccordion } from "@/components/liderancas/participants-attendance-accordion";
+
+export default async function LiderancaPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const leader = await getLeader(id);
+  if (!leader) notFound();
+
+  const [participants, hostedGroups] = await Promise.all([
+    listParticipants({ leaderId: id }),
+    listGroupsHostedByProfile(leader.profile_id),
+  ]);
+  const presencaPorMes = await getMonthlyAttendanceForParticipants(participants.map((p) => p.id));
+  const participantsComPresenca = participants.map((p) => ({
+    id: p.id,
+    full_name: p.full_name,
+    anonymized_at: p.anonymized_at,
+    months: presencaPorMes.get(p.id) ?? [],
+  }));
+
+  return (
+    <div className="flex flex-col gap-6">
+      <BackLink href="/liderancas" label="Líderes" />
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-foreground">{leader.profile?.full_name}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {leader.profile?.email} · {leader.profile?.phone ?? "sem telefone"}
+          </p>
+          {hostedGroups.length > 0 && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              Também é anfitriã {hostedGroups.length === 1 ? "do café" : "dos cafés"}{" "}
+              <span className="font-medium text-foreground">
+                {hostedGroups.map((g) => g.name).join(", ")}
+              </span>
+              .
+            </p>
+          )}
+        </div>
+        <div className="flex shrink-0 items-start gap-2">
+          <ToggleStatusButton id={leader.id} status={leader.status} />
+          <LeaderDeleteButton
+            id={leader.id}
+            nome={leader.profile?.full_name ?? "esta líder"}
+            cafes={(leader.groups ?? []).map((g) => g.name)}
+            redirectTo="/liderancas"
+          />
+        </div>
+      </div>
+
+      <Card className="p-6">
+        <p className="mb-1 text-sm font-semibold text-foreground">Editar dados da liderança</p>
+        <p className="mb-4 text-xs text-muted-foreground">
+          Altere o que precisar e salve — dados da conta e do café são gravados juntos.
+        </p>
+        <LeaderEditForm leader={leader} />
+      </Card>
+
+      <div>
+        <p className="mb-3 text-sm font-semibold text-foreground">
+          Participantes sob responsabilidade ({participants.length})
+        </p>
+        <ParticipantsTable participants={participants} basePath="/participantes" />
+      </div>
+
+      <ParticipantsAttendanceAccordion participants={participantsComPresenca} basePath="/participantes" />
+    </div>
+  );
+}

@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qualidade:
+    name: Qualidade (lint, tipos, unitários, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - name: Build
+        run: npm run build
+        env:
+          # Valores de mentira só para o build compilar; nada aqui acessa o banco real.
+          NEXT_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_ci_placeholder
+          SUPABASE_SERVICE_ROLE_KEY: sb_secret_ci_placeholder
+
+  seguranca:
+    name: Segurança do código (SAST, segredos, dependências)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Semgrep (SAST)
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src semgrep/semgrep:1.183.0 semgrep scan \
+            --config p/default --config p/owasp-top-ten --config p/secrets --config .semgrep/ \
+            --metrics=off --error
+      - name: Gitleaks (segredos em todo o histórico)
+        run: docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.30.1 git /repo -v
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: npm audit (dependências de produção, severidade alta ou crítica)
+        run: npm audit --omit=dev --audit-level=high
+
+  banco:
+    name: Banco (migrações do zero + RLS e funções via pgTAP)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Primeira execução real deste job será no GitHub. Enquanto o histórico de
+    # migrações não for confirmado aplicando do zero, ele avisa mas não bloqueia.
+    # Quando passar verde 2 vezes seguidas, remova a linha abaixo e marque o job como obrigatório.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Supabase local (aplica todas as migrações do zero)
+        run: npm run db:start
+      - name: Testes de banco (pgTAP)
+        run: npm run test:db

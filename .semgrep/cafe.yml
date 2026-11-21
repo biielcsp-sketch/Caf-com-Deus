@@ -1,0 +1,39 @@
+rules:
+  - id: cafe-no-dangerously-set-inner-html
+    languages: [typescript]
+    severity: ERROR
+    message: "HTML cru vindo de dados permite XSS. Renderize como texto (o React já escapa)."
+    pattern: <$EL dangerouslySetInnerHTML={...} />
+
+  - id: cafe-no-supabase-secret-outside-server
+    languages: [typescript]
+    severity: ERROR
+    message: "A chave mestra do Supabase só pode ser lida em lib/env.ts e lib/supabase/admin.ts: ela ignora toda a RLS."
+    paths:
+      include: [app/, components/, lib/]
+      exclude: [lib/env.ts, lib/supabase/admin.ts, lib/supabase/client.ts]
+    pattern-regex: (SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY|sb_secret_[A-Za-z0-9_-]+)
+
+  - id: cafe-no-getsession
+    languages: [typescript]
+    severity: ERROR
+    message: "getSession() não valida o token no servidor. Use auth.getUser() (ou getClaims())."
+    pattern: $SB.auth.getSession(...)
+
+  - id: cafe-no-eval
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: "eval/new Function executam código arbitrário."
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: new Function(...)
+
+  - id: cafe-no-delete-on-sensitive-tables
+    languages: [typescript]
+    severity: ERROR
+    message: "Participantes, presenças, acompanhamentos e encontros nunca são apagados: use anonimização ou deleted_at (regra do CLAUDE.md)."
+    patterns:
+      - pattern: $SB.from("$T").delete(...)
+      - metavariable-regex:
+          metavariable: $T
+          regex: ^(participants|attendance|follow_ups|meetings)$

@@ -1,0 +1,24 @@
+-- Líder passa a enxergar a localização de todos os cafés.
+--
+-- Até aqui `groups_select` era "app_is_admin() or leader_id =
+-- app_current_leader_id()": na tela de Localização a líder via um pino só, o
+-- dela. Isso atrapalhava o uso real — indicar outro café para uma mulher que
+-- mudou de bairro, saber onde acontece o café da região vizinha, visitar uma
+-- colega.
+--
+-- O que esta policy libera é a FICHA DO CAFÉ (nome, endereço, região, dia,
+-- horário, capacidade e pino no mapa) para quem tem cadastro de liderança —
+-- líder e co-líder, que são quem tem linha em `leaders`. Anfitriã sem
+-- cadastro de liderança continua vendo só o café que hospeda.
+--
+-- O que esta policy NÃO libera, porque cada uma tem policy própria e
+-- independente desta: participantes de outro café, encontros de outro café,
+-- presenças, acompanhamentos e fotos do mural de outro café. As policies
+-- dessas tabelas comparam `leader_id` com a líder da sessão diretamente, e
+-- continuam batendo só no café dela.
+--
+-- Escrita (UPDATE) segue como estava: `groups_leader_update` só deixa a
+-- líder mexer no próprio café. Ver um café de outra pessoa não dá nenhum
+-- poder sobre ele.
+create policy "groups_lideranca_select" on groups for select to authenticated
+  using (app_current_leader_id() is not null);
