@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Pencil } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { getParticipant, getParticipantTimeline } from "@/lib/services/participants.service";
 import { PARTICIPANT_STATUS_BADGE, PARTICIPANT_STATUS_LABELS } from "@/lib/participant-status-labels";
 import { Timeline } from "@/components/participantes/timeline";
@@ -47,12 +48,12 @@ export default async function MinhaParticipantePage({
   const alerts = alertsMap.get(id);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <BackLink href="/minhas-participantes" label="Minhas participantes" />
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-semibold text-foreground">{participant.full_name}</h1>
+            <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground">{participant.full_name}</h1>
             <span
               className={`rounded-full px-2.5 py-1 text-xs font-medium ${PARTICIPANT_STATUS_BADGE[participant.status]}`}
             >
@@ -96,6 +97,17 @@ export default async function MinhaParticipantePage({
         <>
           <ContactButtons whatsapp={participant.whatsapp} phone={participant.phone} />
 
+          <SecaoRetratil titulo="Informações">
+            <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+              <Info label="Telefone" value={participant.phone} />
+              <Info label="WhatsApp" value={participant.whatsapp} />
+              <Info label="Cidade / Bairro" value={[participant.city, participant.neighborhood].filter(Boolean).join(" / ")} />
+              <Info label="CEP" value={participant.cep ? formatCep(participant.cep) : null} />
+              <Info label="Igreja" value={churchSummary(participant)} />
+            </dl>
+          </SecaoRetratil>
+          <SecaoRetratil titulo="Situação e ações">
+            <div className="flex flex-col gap-4">
           {participant.current_leader_id && <ReturnToQueueCard participantId={participant.id} />}
 
           <VisitorCard
@@ -105,16 +117,6 @@ export default async function MinhaParticipantePage({
             contactConfirmedAt={participant.visitor_contact_confirmed_at}
           />
 
-          <Card className="p-6">
-            <p className="text-sm font-semibold text-foreground">Informações</p>
-            <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
-              <Info label="Telefone" value={participant.phone} />
-              <Info label="WhatsApp" value={participant.whatsapp} />
-              <Info label="Cidade / Bairro" value={[participant.city, participant.neighborhood].filter(Boolean).join(" / ")} />
-              <Info label="CEP" value={participant.cep ? formatCep(participant.cep) : null} />
-              <Info label="Igreja" value={churchSummary(participant)} />
-            </dl>
-          </Card>
 
           <JourneyStatusCard participantId={id} currentStatus={participant.status} currentInactiveReason={participant.inactive_reason} />
 
@@ -124,35 +126,33 @@ export default async function MinhaParticipantePage({
             history={contactHistory}
             basePath="/minhas-participantes"
           />
+            </div>
+          </SecaoRetratil>
         </>
       )}
 
-      <Card className="p-6">
-        <p className="text-sm font-semibold text-foreground">Jornada</p>
+      <SecaoRetratil titulo="Jornada">
         <div className="mt-3">
           <Timeline entries={timeline} />
         </div>
-      </Card>
+      </SecaoRetratil>
 
-      <Card className="p-6">
-        <p className="mb-3 text-sm font-semibold text-foreground">Presença</p>
+      <SecaoRetratil titulo="Presença">
         <AttendanceHistory history={attendance} />
-      </Card>
+      </SecaoRetratil>
 
       {!participant.anonymized_at && (
-        <Card className="p-6">
-          <p className="mb-3 text-sm font-semibold text-foreground">Registrar acompanhamento</p>
+        <SecaoRetratil titulo="Registrar acompanhamento">
           <FollowUpForm participantId={id} basePath="/minhas-participantes" />
-        </Card>
+        </SecaoRetratil>
       )}
 
-      <Card className="p-6">
-        <p className="mb-3 text-sm font-semibold text-foreground">Acompanhamentos</p>
+      <SecaoRetratil titulo="Acompanhamentos">
         <FollowUpsList
           followUps={followUps}
           manage={isAdminRole(viewer?.role) ? { participantId: id, basePath: "/minhas-participantes" } : undefined}
         />
-      </Card>
+      </SecaoRetratil>
 
     </div>
   );

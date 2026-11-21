@@ -7,6 +7,8 @@ import { ContactLinks } from "@/components/gestao-membros/participant-detail-car
 import type { FormActionState } from "@/app/actions/participants";
 import type { PendingContact } from "@/lib/services/contact-alerts.service";
 
+const VISIVEIS = 3;
+
 function prazo(c: PendingContact) {
   if (c.diasDesde === 0) return "chegou hoje";
   if (c.diasDesde === 1) return "há 1 dia";
@@ -74,7 +76,7 @@ export function PendingContactsCard({
       </div>
 
       <ul className="mt-3 flex flex-col gap-2">
-        {contacts.map((c) => (
+        {contacts.slice(0, VISIVEIS).map((c) => (
           <li
             key={c.participantId}
             className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 sm:flex-row sm:items-center sm:justify-between"
@@ -99,6 +101,39 @@ export function PendingContactsCard({
           </li>
         ))}
       </ul>
+      {contacts.length > VISIVEIS && (
+        <details className="mt-2">
+          <summary className="glass-inner flex h-10 w-fit cursor-pointer list-none items-center rounded-full px-4 text-sm font-medium text-foreground">
+            Ver todas ({contacts.length})
+          </summary>
+          <ul className="mt-2 flex flex-col gap-2">
+        {contacts.slice(VISIVEIS).map((c) => (
+          <li
+            key={c.participantId}
+            className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div className="min-w-0 text-sm">
+              <p className="font-medium text-foreground">{c.participantName}</p>
+              <p className={`text-xs ${c.atrasado ? "font-medium text-danger" : "text-muted-foreground"}`}>
+                Chegou {prazo(c)}
+                {c.atrasado ? " — prazo vencido" : ""}
+                {mode === "gestao" ? ` · Líder: ${c.leaderName}` : ""}
+                {c.cafeName ? ` · ${c.cafeName}` : ""}
+              </p>
+              <div className="mt-1 text-xs">
+                {mode === "lider" ? (
+                  <ContactLinks phone={c.phone} whatsapp={c.whatsapp} />
+                ) : (
+                  <ContactLinks phone={c.leaderPhone} whatsapp={c.leaderWhatsapp} />
+                )}
+              </div>
+            </div>
+            {mode === "lider" && <ConfirmButton participantId={c.participantId} />}
+          </li>
+        ))}
+          </ul>
+        </details>
+      )}
     </section>
   );
 }

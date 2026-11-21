@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/services/profiles.service";
 import { getLeaderAssignmentHistory } from "@/lib/services/participants.service";
 import { Card } from "@/components/ui/Card";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { BackLink } from "@/components/ui/BackLink";
 
 export default async function HistoricoPage() {
@@ -32,11 +33,13 @@ export default async function HistoricoPage() {
   return (
     <div>
       <BackLink href="/inicio" label="Início" />
-      <h1 className="mt-3 text-2xl font-semibold text-foreground">Histórico</h1>
+      <h1 className="font-display mt-3 text-3xl font-semibold leading-tight tracking-tight text-foreground">Histórico</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Participantes que estão ou já estiveram sob sua responsabilidade
       </p>
-      <div className="mt-4 flex flex-col gap-2">
+      <div className="mt-4">
+       <SecaoRetratil titulo="Participantes" contador={history.length}>
+        <div className="flex flex-col gap-2">
         {history.length === 0 && (
           <Card className="p-6">
             <p className="text-sm text-muted-foreground">Nenhum vínculo registrado ainda.</p>
@@ -55,6 +58,8 @@ export default async function HistoricoPage() {
             </p>
           </Link>
         ))}
+        </div>
+       </SecaoRetratil>
       </div>
     </div>
   );
