@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { Card } from "@/components/ui/Card";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { BackLink } from "@/components/ui/BackLink";
 import { getLeader } from "@/lib/services/leaders.service";
 import { listGroupsHostedByProfile } from "@/lib/services/groups.service";
@@ -33,11 +33,11 @@ export default async function LiderancaPage({
   }));
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <BackLink href="/liderancas" label="Líderes" />
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">{leader.profile?.full_name}</h1>
+          <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground">{leader.profile?.full_name}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {leader.profile?.email} · {leader.profile?.phone ?? "sem telefone"}
           </p>
@@ -62,20 +62,16 @@ export default async function LiderancaPage({
         </div>
       </div>
 
-      <Card className="p-6">
-        <p className="mb-1 text-sm font-semibold text-foreground">Editar dados da liderança</p>
+      <SecaoRetratil titulo="Dados da liderança">
         <p className="mb-4 text-xs text-muted-foreground">
           Altere o que precisar e salve — dados da conta e do café são gravados juntos.
         </p>
         <LeaderEditForm leader={leader} />
-      </Card>
+      </SecaoRetratil>
 
-      <div>
-        <p className="mb-3 text-sm font-semibold text-foreground">
-          Participantes sob responsabilidade ({participants.length})
-        </p>
+      <SecaoRetratil titulo="Participantes sob responsabilidade" contador={participants.length}>
         <ParticipantsTable participants={participants} basePath="/participantes" />
-      </div>
+      </SecaoRetratil>
 
       <ParticipantsAttendanceAccordion participants={participantsComPresenca} basePath="/participantes" />
     </div>

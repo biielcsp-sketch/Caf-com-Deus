@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
-import { Card } from "@/components/ui/Card";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { BackLink } from "@/components/ui/BackLink";
 import { getGroup } from "@/lib/services/groups.service";
 import { listHostsForSelect } from "@/lib/services/leaders.service";
@@ -27,7 +27,7 @@ export default async function GrupoPage({
     <div>
       <BackLink href="/cafes?tab=grupos" label="Cafés" />
       <div className="mt-3 flex items-start justify-between gap-4">
-        <h1 className="text-2xl font-semibold text-foreground">{group.name}</h1>
+        <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground">{group.name}</h1>
         <GroupDeleteButton id={group.id} nome={group.name} redirectTo="/cafes?tab=grupos" />
       </div>
 
@@ -44,15 +44,14 @@ export default async function GrupoPage({
           </div>
         </div>
       )}
-      <Card className="mt-4 p-6">
-        <GroupForm group={group} leaders={leaders} hosts={hosts} />
-      </Card>
+      <div className="mt-4 flex flex-col gap-4">
+        <SecaoRetratil titulo="Dados do café">
+          <GroupForm group={group} leaders={leaders} hosts={hosts} />
+        </SecaoRetratil>
 
-      <div className="mt-6">
-        <p className="mb-3 text-sm font-semibold text-foreground">
-          Participantes do grupo ({participants.length})
-        </p>
-        <ParticipantsTable participants={participants} basePath="/participantes" />
+        <SecaoRetratil titulo="Participantes do grupo" contador={participants.length}>
+          <ParticipantsTable participants={participants} basePath="/participantes" />
+        </SecaoRetratil>
       </div>
     </div>
   );

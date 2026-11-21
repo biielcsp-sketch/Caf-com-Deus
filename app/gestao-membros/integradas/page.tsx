@@ -1,5 +1,6 @@
 import { listIntegratedParticipants, listLeadersWithCafe } from "@/lib/services/integrated.service";
 import { ParticipantDetailCard } from "@/components/gestao-membros/participant-detail-card";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { BackLink } from "@/components/ui/BackLink";
 import { Card } from "@/components/ui/Card";
 import { compareNames } from "@/lib/sort-by-name";
@@ -36,13 +37,12 @@ export default async function IntegradasPage({
   const ordenados = [...grupos.values()].sort((a, b) => compareNames(a.titulo, b.titulo));
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <BackLink href="/gestao-membros" label="Gestão de Membros" />
       <div>
-        <h1 className="text-2xl font-semibold text-foreground">Participantes Integradas</h1>
+        <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground">Participantes Integradas</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {participants.length} participante(s) em {ordenados.length} café(s). Toque no cartão para ver todos os
-          dados.
+          {participants.length} participante(s) em {ordenados.length} café(s)
         </p>
       </div>
 
@@ -68,17 +68,18 @@ export default async function IntegradasPage({
       )}
 
       {ordenados.map((g) => (
-        <section key={`${g.titulo}-${g.lider}`} className="flex flex-col gap-2">
-          <div className="flex items-baseline justify-between gap-2 border-b border-border pb-1">
-            <h2 className="text-sm font-semibold text-foreground">
-              {g.titulo} <span className="font-normal text-muted-foreground">· {g.lider}</span>
-            </h2>
-            <span className="text-xs text-muted-foreground">{g.itens.length}</span>
+        <SecaoRetratil
+          key={`${g.titulo}-${g.lider}`}
+          titulo={`${g.titulo} · ${g.lider}`}
+          contador={g.itens.length}
+          abertoPorPadrao={Boolean(params.search || params.leaderId)}
+        >
+          <div className="flex flex-col gap-2">
+            {g.itens.map((p) => (
+              <ParticipantDetailCard key={p.id} participant={p} />
+            ))}
           </div>
-          {g.itens.map((p) => (
-            <ParticipantDetailCard key={p.id} participant={p} />
-          ))}
-        </section>
+        </SecaoRetratil>
       ))}
     </div>
   );

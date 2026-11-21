@@ -1,5 +1,6 @@
 "use client";
 
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
@@ -48,14 +49,15 @@ export function GruposPanel({
         <p className="text-sm text-muted-foreground">{filtered.length} encontrados</p>
         <Link
           href="/grupos/novo"
-          className="flex items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
+          className="flex items-center justify-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
         >
           <Plus size={16} />
           Novo grupo
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 rounded-2xl border border-border bg-card p-4 sm:grid-cols-2 md:grid-cols-4">
+      <SecaoRetratil titulo="Filtros" nivel="h2">
+      <div className="grid grid-cols-1 gap-3 pt-1 sm:grid-cols-2 md:grid-cols-4">
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -85,6 +87,7 @@ export function GruposPanel({
           className={inputClass}
         />
       </div>
+      </SecaoRetratil>
 
       <GroupsList groups={filtered} />
     </div>

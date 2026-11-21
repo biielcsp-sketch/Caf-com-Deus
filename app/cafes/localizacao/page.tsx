@@ -31,7 +31,7 @@ export default async function GruposLocalizacaoPage() {
   ]);
 
   const content = (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <BackLink href={isAdminRole(profile.role) ? "/dashboard" : "/inicio"} label={isAdminRole(profile.role) ? "Dashboard" : "Início"} />
       <PageHeader
         title="Localização dos Cafés"

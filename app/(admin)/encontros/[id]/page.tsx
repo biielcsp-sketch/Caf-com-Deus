@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { ClipboardCheck } from "lucide-react";
 import { notFound } from "next/navigation";
-import { Card } from "@/components/ui/Card";
 import { getMeeting, getMeetingParticipants, getGroupParticipantsNotInMeeting } from "@/lib/services/meetings.service";
 import { listGroups } from "@/lib/services/groups.service";
 import { MeetingForm } from "@/components/encontros/meeting-form";
 import { MeetingParticipantsPanel } from "@/components/encontros/meeting-participants-panel";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { BackLink } from "@/components/ui/BackLink";
 
 export default async function EncontroPage({
@@ -25,26 +25,25 @@ export default async function EncontroPage({
   ]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <BackLink href="/cafes?tab=encontros" label="Cafés" />
       <PageHeader title={meeting.title}>
         <Link
           href={`/encontros/${id}/presenca`}
-          className="flex items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
+          className="flex items-center justify-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
         >
           <ClipboardCheck size={16} />
           Chamada
         </Link>
       </PageHeader>
 
-      <Card className="p-6">
+      <SecaoRetratil titulo="Dados do encontro">
         <MeetingForm meeting={meeting} groups={groups} basePath="/encontros" />
-      </Card>
+      </SecaoRetratil>
 
-      <Card className="p-6">
-        <p className="mb-3 text-sm font-semibold text-foreground">Participantes vinculadas</p>
+      <SecaoRetratil titulo="Participantes vinculadas" contador={linked.length}>
         <MeetingParticipantsPanel meetingId={id} basePath="/encontros" linked={linked} available={available} />
-      </Card>
+      </SecaoRetratil>
     </div>
   );
 }
