@@ -56,12 +56,17 @@ export default async function DashboardPage() {
       </section>
 
       <div className="grid grid-cols-3 gap-3">
-        <StatCard label="Aguardando distribuição" value={data.awaitingDistribution} />
+        <StatCard
+          label="Aguardando distribuição"
+          value={data.awaitingDistribution}
+          href="/gestao-membros/novas-inscricoes"
+        />
         <StatCard
           label="Presença média"
+          href="/relatorios"
           value={data.averageAttendance !== null ? `${data.averageAttendance}%` : "—"}
         />
-        <StatCard label="Precisam de contato" value={data.needingAttention} />
+        <StatCard label="Precisam de contato" value={data.needingAttention} href="/acompanhamentos" />
       </div>
 
       <DashboardIndicadores
