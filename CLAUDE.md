@@ -113,6 +113,22 @@ histórico do git, não aceite a versão gerada.
 - Deploy: Netlify publica a partir de `main`. Mesclar = publicar.
 - Commit e push só quando o Gabriel pedir.
 
+### Regra obrigatória: a `main` NÃO tem proteção de branch
+O repositório é privado no plano gratuito do GitHub, e a proteção da `main` exigiria GitHub
+Pro (decisão do Gabriel em 21/11/2026: seguir sem). Então o cadeado é a disciplina, e quem
+mexer (Gabriel ou Claude) segue SEMPRE este passo a passo:
+1. Nunca commitar nem dar push direto na `main`. Toda mudança vai em branch própria.
+2. Abrir Pull Request e esperar os 3 jobs do CI terminarem.
+3. Só mesclar com `Qualidade` e `Segurança` verdes. Vermelho = corrigir antes; nunca mesclar
+   "para ver se passa". O job `Banco` é informativo por enquanto.
+4. Migration nova: aplicar no banco ANTES de mesclar (o código novo pode depender dela).
+5. Mesclar publica no Netlify. Claude só mescla quando o Gabriel disser explicitamente.
+6. Depois do deploy: abrir o site e testar login, presença e a ficha de uma participante.
+   Se quebrou, reverter em Netlify → Deploys → deploy anterior → Publish deploy
+   (https://app.netlify.com/projects/cafecomdeuslagoinha/deploys), depois corrigir pelo PR.
+Reavaliar quando outra pessoa começar a mexer no código: assinar o Pro e ativar a regra em
+https://github.com/biielcsp-sketch/Caf-com-Deus/settings/rules.
+
 ## Qualidade e segurança automatizadas
 - `npm run check` = tipos + lint + testes. Rode antes de abrir o PR.
 - `tests/unit/seguranca-estatica.test.ts` reprova: `dangerouslySetInnerHTML`, `eval`,
