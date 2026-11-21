@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f8f1ed;
   --foreground: #3a2e28;
-  --card: #ffffff;
+  --card: #fbf7f4;
   --card-foreground: #3a2e28;
   --muted: #f3e9e0;
   --muted-foreground: #8a7a70;
@@ -65,4 +65,135 @@ body {
    mapa do Brasil. */
 .leaflet-attribution-flag {
   display: none;
+}
+
+/* ------------------------------------------------------------------
+   Vidro (novo design). Fundo único (#f8f1ed) em todas as telas; o efeito
+   vem de borda branca grossa, brilho especular, sombra interna e anel
+   escuro externo. Fica SEM camada (@layer) de propósito: assim vence as
+   utilities do Tailwind (bg-card, bg-primary, border-border) já espalhadas
+   pelas telas, sem precisar editar cada arquivo.
+   backdrop-filter só nas barras fixas — em listas longas pesaria no
+   celular e, sobre fundo liso, não mudaria nada visualmente.
+   ------------------------------------------------------------------ */
+:root {
+  --glass-bg:
+    radial-gradient(90% 55% at 15% 0%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 70%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.34));
+  --glass-ring: 0 0 0 1px rgba(58, 46, 40, 0.18);
+  --glass-panel-shadow:
+    inset 0 3px 3px #fff, inset 0 -12px 22px rgba(58, 46, 40, 0.1),
+    inset 0 0 0 6px rgba(255, 255, 255, 0.4), var(--glass-ring),
+    0 2px 4px rgba(58, 46, 40, 0.1), 0 26px 46px rgba(58, 46, 40, 0.22);
+  --glass-inner-shadow:
+    inset 0 2px 2px #fff, inset 0 -6px 10px rgba(58, 46, 40, 0.1),
+    inset 0 0 0 3px rgba(255, 255, 255, 0.4), var(--glass-ring),
+    0 8px 16px rgba(58, 46, 40, 0.14);
+  --glass-field-bg: linear-gradient(180deg, rgba(58, 46, 40, 0.06), rgba(255, 255, 255, 0.55));
+  --glass-field-shadow:
+    inset 0 3px 6px rgba(58, 46, 40, 0.16), inset 0 -2px 2px #fff, var(--glass-ring);
+  --glass-green-bg:
+    radial-gradient(90% 50% at 20% 0%, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 65%),
+    linear-gradient(150deg, rgba(26, 138, 16, 0.94), rgba(13, 91, 6, 0.96) 55%, rgba(8, 63, 4, 0.96));
+  --glass-green-shadow:
+    inset 0 3px 3px rgba(255, 255, 255, 0.6), inset 0 -8px 14px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.5), 0 0 0 1px rgba(8, 63, 4, 0.5),
+    0 14px 26px rgba(13, 91, 6, 0.4);
+  --glass-red-bg:
+    radial-gradient(90% 50% at 20% 0%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 65%),
+    linear-gradient(150deg, rgba(200, 80, 60, 0.95), rgba(179, 67, 47, 0.97) 55%, rgba(130, 44, 30, 0.97));
+  --glass-red-shadow:
+    inset 0 3px 3px rgba(255, 255, 255, 0.55), inset 0 -8px 14px rgba(0, 0, 0, 0.22),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.45), 0 0 0 1px rgba(130, 44, 30, 0.5),
+    0 14px 26px rgba(179, 67, 47, 0.35);
+  --glass-gold-bg:
+    radial-gradient(90% 60% at 15% 0%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 70%),
+    linear-gradient(145deg, rgba(245, 232, 208, 0.95), rgba(245, 232, 208, 0.55));
+}
+
+/* Painel grande (cartão de página, cabeçalho de seção). */
+.glass-panel {
+  border: 2px solid #fff;
+  background: var(--glass-bg);
+  box-shadow: var(--glass-panel-shadow);
+}
+
+/* Cartões e blocos internos: toda <div class="... bg-card"> do sistema. */
+.glass-inner,
+.bg-card:not(input):not(select):not(textarea):not(button):not(a) {
+  border: 2px solid #fff;
+  background: var(--glass-bg);
+  box-shadow: var(--glass-inner-shadow);
+}
+
+/* Botões e links secundários que já usam bg-card. */
+button.bg-card,
+a.bg-card {
+  border: 2px solid #fff;
+  background: var(--glass-bg);
+  box-shadow: var(--glass-inner-shadow);
+}
+
+/* Destaque dourado suave (avisos, "como funciona"). */
+.glass-gold {
+  border: 2px solid #fff;
+  background: var(--glass-gold-bg);
+  box-shadow:
+    inset 0 2px 2px #fff, inset 0 -6px 10px rgba(122, 90, 31, 0.12),
+    0 0 0 1px rgba(122, 90, 31, 0.25), 0 8px 16px rgba(58, 46, 40, 0.12);
+}
+
+/* Botão verde de vidro. */
+.glass-green,
+button.bg-primary,
+a.bg-primary {
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  background: var(--glass-green-bg);
+  box-shadow: var(--glass-green-shadow);
+  color: var(--primary-foreground);
+}
+
+.glass-red,
+button.bg-danger,
+a.bg-danger {
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  background: var(--glass-red-bg);
+  box-shadow: var(--glass-red-shadow);
+  color: var(--danger-foreground);
+}
+
+/* Campos "afundados". Exclui caixas de marcar, arquivo e controles
+   que não são campo de texto. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]),
+select,
+textarea {
+  border: 2px solid #fff;
+  background: var(--glass-field-bg);
+  box-shadow: var(--glass-field-shadow);
+  border-radius: 9999px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  color: var(--foreground);
+}
+
+textarea {
+  border-radius: 1.5rem;
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--glass-field-shadow), 0 0 0 3px rgba(13, 91, 6, 0.35);
+}
+
+/* Barras fixas: único lugar com blur de verdade. */
+.glass-bar {
+  border: 2px solid #fff;
+  background: var(--glass-bg);
+  box-shadow: var(--glass-panel-shadow);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
 }
