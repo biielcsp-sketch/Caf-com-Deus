@@ -15,7 +15,7 @@ function prazo(c: PendingContact) {
   return `há ${c.diasDesde} dias`;
 }
 
-function ConfirmButton({ participantId }: { participantId: string }) {
+function ConfirmButton({ participantId, rotulo }: { participantId: string; rotulo: string }) {
   const [state, action, pending] = useActionState<FormActionState, FormData>(
     confirmContactAction.bind(null, participantId),
     undefined,
@@ -25,19 +25,43 @@ function ConfirmButton({ participantId }: { participantId: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-60"
+        className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground disabled:opacity-60"
       >
-        {pending ? "Salvando..." : "Já fiz contato"}
+        {pending ? "Salvando..." : rotulo}
       </button>
       {state?.error && <span className="text-xs text-danger">{state.error}</span>}
     </form>
   );
 }
 
+function Item({ c, mode }: { c: PendingContact; mode: "lider" | "gestao" }) {
+  return (
+    <li className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="min-w-0 text-sm">
+        <p className="font-medium text-foreground">{c.participantName}</p>
+        <p className={`text-xs ${c.atrasado ? "font-medium text-danger" : "text-muted-foreground"}`}>
+          Chegou {prazo(c)}
+          {c.atrasado ? " — prazo vencido" : ""}
+          {mode === "gestao" ? ` · Líder: ${c.leaderName}` : ""}
+          {c.cafeName ? ` · ${c.cafeName}` : ""}
+        </p>
+        <div className="mt-1 text-xs">
+          {mode === "lider" ? (
+            <ContactLinks phone={c.phone} whatsapp={c.whatsapp} />
+          ) : (
+            <ContactLinks phone={c.leaderPhone} whatsapp={c.leaderWhatsapp} />
+          )}
+        </div>
+      </div>
+      <ConfirmButton participantId={c.participantId} rotulo={mode === "lider" ? "Já fiz contato" : "Contato feito"} />
+    </li>
+  );
+}
+
 // Card do topo do dashboard.
 // - Líder: quem acabou de chegar ao café dela, com o botão "Já fiz contato".
 // - Pastora / Gestora: só quem passou do prazo de 3 dias, com o contato da
-//   líder para cobrar.
+//   líder para cobrar e o botão "Contato feito" para quando já foi resolvido.
 export function PendingContactsCard({
   contacts,
   mode,
@@ -77,28 +101,7 @@ export function PendingContactsCard({
 
       <ul className="mt-3 flex flex-col gap-2">
         {contacts.slice(0, VISIVEIS).map((c) => (
-          <li
-            key={c.participantId}
-            className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 sm:flex-row sm:items-center sm:justify-between"
-          >
-            <div className="min-w-0 text-sm">
-              <p className="font-medium text-foreground">{c.participantName}</p>
-              <p className={`text-xs ${c.atrasado ? "font-medium text-danger" : "text-muted-foreground"}`}>
-                Chegou {prazo(c)}
-                {c.atrasado ? " — prazo vencido" : ""}
-                {mode === "gestao" ? ` · Líder: ${c.leaderName}` : ""}
-                {c.cafeName ? ` · ${c.cafeName}` : ""}
-              </p>
-              <div className="mt-1 text-xs">
-                {mode === "lider" ? (
-                  <ContactLinks phone={c.phone} whatsapp={c.whatsapp} />
-                ) : (
-                  <ContactLinks phone={c.leaderPhone} whatsapp={c.leaderWhatsapp} />
-                )}
-              </div>
-            </div>
-            {mode === "lider" && <ConfirmButton participantId={c.participantId} />}
-          </li>
+          <Item key={c.participantId} c={c} mode={mode} />
         ))}
       </ul>
       {contacts.length > VISIVEIS && (
@@ -107,30 +110,9 @@ export function PendingContactsCard({
             Ver todas ({contacts.length})
           </summary>
           <ul className="mt-2 flex flex-col gap-2">
-        {contacts.slice(VISIVEIS).map((c) => (
-          <li
-            key={c.participantId}
-            className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 sm:flex-row sm:items-center sm:justify-between"
-          >
-            <div className="min-w-0 text-sm">
-              <p className="font-medium text-foreground">{c.participantName}</p>
-              <p className={`text-xs ${c.atrasado ? "font-medium text-danger" : "text-muted-foreground"}`}>
-                Chegou {prazo(c)}
-                {c.atrasado ? " — prazo vencido" : ""}
-                {mode === "gestao" ? ` · Líder: ${c.leaderName}` : ""}
-                {c.cafeName ? ` · ${c.cafeName}` : ""}
-              </p>
-              <div className="mt-1 text-xs">
-                {mode === "lider" ? (
-                  <ContactLinks phone={c.phone} whatsapp={c.whatsapp} />
-                ) : (
-                  <ContactLinks phone={c.leaderPhone} whatsapp={c.leaderWhatsapp} />
-                )}
-              </div>
-            </div>
-            {mode === "lider" && <ConfirmButton participantId={c.participantId} />}
-          </li>
-        ))}
+            {contacts.slice(VISIVEIS).map((c) => (
+              <Item key={c.participantId} c={c} mode={mode} />
+            ))}
           </ul>
         </details>
       )}
