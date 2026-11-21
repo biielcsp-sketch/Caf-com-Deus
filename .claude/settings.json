@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./node_modules/**)",
+      "Read(./.next/**)",
+      "Read(./.env.local)",
+      "Read(./.env*.local)"
+    ]
+  }
+}
