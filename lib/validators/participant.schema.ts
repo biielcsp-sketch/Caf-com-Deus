@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizarCidade } from "@/lib/cidade";
 import { birthDateIssue, emailTypoIssue, isValidCep, CHURCH_STATUSES } from "@/lib/field-rules";
 
 export const AVAILABILITY_DAYS = [
@@ -38,7 +39,12 @@ export const ParticipantPersonalSchema = z.object({
     .refine((v) => !v || isValidCep(v), { error: "CEP inválido: informe os 8 dígitos." }),
   church_status: z.enum(CHURCH_STATUSES).optional().nullable(),
   church_name: z.string().trim().optional().nullable(),
-  city: z.string().trim().optional().nullable(),
+  city: z
+    .string()
+    .trim()
+    .optional()
+    .nullable()
+    .transform((v) => (v ? normalizarCidade(v) || null : v)),
   neighborhood: z.string().trim().optional().nullable(),
   address: z.string().trim().optional().nullable(),
   availability_days: z.array(z.enum(AVAILABILITY_DAYS)).optional().nullable(),

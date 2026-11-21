@@ -1,4 +1,5 @@
 import "server-only";
+import { normalizarCidade } from "@/lib/cidade";
 import { createClient } from "@/lib/supabase/server";
 import { computeAttentionAlerts, precisaAtencaoPastoral } from "@/lib/services/followup.service";
 import {
@@ -92,7 +93,7 @@ export async function getAdminDashboard() {
   );
   const needingAttention = [...alertsMap.values()].filter(precisaAtencaoPastoral).length;
 
-  const byRegion = countBy(byRegionRaw ?? [], (r) => r.city || "Não informado");
+  const byRegion = countBy(byRegionRaw ?? [], (r) => normalizarCidade(r.city) || "Não informado");
   const byLeader = countBy(byLeaderRaw ?? [], (r) => r.leader?.profile?.full_name || "Sem líder");
   const { porGrupo } = await getOcupacaoAtual();
   const byGroup = (groups ?? []).map((g) => ({

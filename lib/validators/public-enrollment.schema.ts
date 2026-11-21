@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizarCidade } from "@/lib/cidade";
 import { birthDateIssue, emailTypoIssue, isValidCep, CHURCH_STATUSES } from "@/lib/field-rules";
 import { isValidCpf, onlyDigits } from "@/lib/cpf";
 import { AVAILABILITY_DAYS, AVAILABILITY_PERIODS } from "@/lib/validators/participant.schema";
@@ -44,7 +45,11 @@ export const PublicEnrollmentSchema = z.object({
     .optional()
     .transform((v) => (v ? v.replace(/\D/g, "") : undefined))
     .refine((v) => !v || isValidCep(v), { error: "CEP inválido: informe os 8 dígitos." }),
-  city: z.string().trim().optional(),
+  city: z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => (v ? normalizarCidade(v) || undefined : v)),
   neighborhood: z.string().trim().optional(),
   address: z.string().trim().min(1, { error: "Informe seu endereço." }),
   availability_days: z
