@@ -15,7 +15,7 @@ export function CoffeeLoader({ size = 96, label = "Carregando" }: CoffeeLoaderPr
         muted
         playsInline
         style={{ width: size, height: size }}
-        className="rounded-full object-cover"
+        className="object-cover mix-blend-multiply"
       />
       <span className="sr-only">{label}</span>
     </div>

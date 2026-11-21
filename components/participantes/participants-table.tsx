@@ -74,9 +74,9 @@ export function ParticipantsTable({
             <div className="mt-2 flex flex-wrap items-center gap-2 border-t border-border/60 pt-2">
               <Link
                 href={`${basePath}/${p.id}/editar`}
-                className="glass-inner flex h-9 items-center gap-1.5 rounded-full px-3.5 text-sm font-medium text-foreground"
+                className="glass-inner flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium text-foreground"
               >
-                <Pencil size={14} />
+                <Pencil size={13} />
                 Editar
               </Link>
               <ParticipantDeleteButton id={p.id} nome={p.full_name} compact />
