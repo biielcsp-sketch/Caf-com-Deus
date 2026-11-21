@@ -21,7 +21,7 @@ export function BottomNav({
   return (
     <nav
       aria-label="Navegação principal"
-      className="glass-bar fixed inset-x-3 bottom-3 z-30 flex items-end justify-between rounded-full px-3 pb-2 pt-2 md:hidden"
+      className="glass-bar fixed inset-x-3 bottom-3 z-30 flex items-end justify-between rounded-full px-2 pb-1.5 pt-1.5 md:hidden"
     >
       {items.map((item, index) => {
         const active = isActive(item.href);
@@ -32,16 +32,16 @@ export function BottomNav({
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
-            className="flex flex-1 flex-col items-center gap-1 text-[11px] font-medium"
+            className="flex flex-1 flex-col items-center gap-0.5 text-[10px] font-medium"
           >
             <span
               className={
                 center
-                  ? "glass-green -mt-7 flex h-14 w-14 items-center justify-center rounded-full"
-                  : `flex h-9 w-9 items-center justify-center rounded-full ${active ? "text-primary" : "text-muted-foreground"}`
+                  ? "glass-green -mt-5 flex h-11 w-11 items-center justify-center rounded-full"
+                  : `flex h-7 w-7 items-center justify-center rounded-full ${active ? "text-primary" : "text-muted-foreground"}`
               }
             >
-              <Icon size={center ? 24 : 21} strokeWidth={active || center ? 2.4 : 2} />
+              <Icon size={center ? 20 : 17} strokeWidth={active || center ? 2.2 : 1.8} />
             </span>
             <span className={active ? "text-primary" : "text-muted-foreground"}>{item.label}</span>
           </Link>
@@ -50,10 +50,10 @@ export function BottomNav({
       <button
         type="button"
         onClick={onMenu}
-        className="flex flex-1 flex-col items-center gap-1 bg-transparent text-[11px] font-medium text-muted-foreground"
+        className="flex flex-1 flex-col items-center gap-0.5 bg-transparent text-[10px] font-medium text-muted-foreground"
       >
-        <span className="flex h-9 w-9 items-center justify-center rounded-full">
-          <Menu size={21} />
+        <span className="flex h-7 w-7 items-center justify-center rounded-full">
+          <Menu size={17} strokeWidth={1.8} />
         </span>
         Menu
       </button>

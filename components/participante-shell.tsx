@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Sparkles, BookOpen, Newspaper, Images, Menu, X, LogOut } from "lucide-react";
+import { Sparkles, BookOpen, Newspaper, Images, X, LogOut } from "lucide-react";
 import { NavLink } from "@/components/nav-link";
 import { BottomNav } from "@/components/bottom-nav";
 import { SidebarIdentity } from "@/components/ui/SidebarIdentity";
@@ -90,21 +90,18 @@ export function ParticipanteShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar — mobile */}
-        <header className="glass-bar relative mx-3 mt-3 flex items-center rounded-full px-5 py-2 md:hidden">
-          <button aria-label="Abrir menu" onClick={() => setMenuOpen(true)} className="relative z-10">
-            <Menu size={22} />
-          </button>
+        <header className="relative mx-4 mt-3 flex h-12 items-center md:hidden">
           <Image
             src="/icons/logo-header-mobile.png"
             alt="Café com Deus Shine"
             width={1600}
             height={1011}
-            className="absolute left-1/2 h-12 w-auto -translate-x-1/2"
+            className="absolute left-1/2 h-11 w-auto -translate-x-1/2"
             priority
           />
         </header>
 
-        <main className="flex-1 p-4 pb-32 md:p-8">{children}</main>
+        <main className="flex-1 p-4 pb-28 md:p-8">{children}</main>
 
         <BottomNav
           items={[NAV_ITEMS[0], NAV_ITEMS[1], NAV_ITEMS[2], NAV_ITEMS[3]]}
