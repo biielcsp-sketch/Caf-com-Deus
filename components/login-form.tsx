@@ -10,7 +10,7 @@ export function LoginForm() {
   return (
     <form action={action} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="email" className="text-sm font-medium text-foreground">
+        <label htmlFor="email" className="pl-1.5 text-[13px] font-semibold text-foreground">
           E-mail
         </label>
         <input
@@ -19,11 +19,11 @@ export function LoginForm() {
           type="email"
           required
           autoComplete="email"
-          className="rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary"
+          className="h-[54px] text-[15px]"
         />
       </div>
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="password" className="text-sm font-medium text-foreground">
+        <label htmlFor="password" className="pl-1.5 text-[13px] font-semibold text-foreground">
           Senha
         </label>
         <input
@@ -32,11 +32,11 @@ export function LoginForm() {
           type="password"
           required
           autoComplete="current-password"
-          className="rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary"
+          className="h-[54px] text-[15px]"
         />
       </div>
       {state?.error && <p className="text-sm text-danger">{state.error}</p>}
-      <Button type="submit" disabled={pending} className="mt-2 w-full">
+      <Button type="submit" disabled={pending} className="mt-2 h-[58px] w-full text-base font-semibold">
         {pending ? "Entrando..." : "Entrar"}
       </Button>
     </form>

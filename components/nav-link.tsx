@@ -41,8 +41,8 @@ export function NavLink({
       onClick={onNavigate}
       className={`flex items-center gap-3 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
         active
-          ? "bg-primary text-primary-foreground"
-          : "text-foreground hover:bg-muted"
+          ? "bg-primary/15 font-semibold text-primary"
+          : "text-foreground hover:bg-white/60"
       }`}
     >
       <Icon size={18} strokeWidth={active ? 2.5 : 2} />

@@ -35,7 +35,7 @@ export function PublicEnrollmentForm({ code }: { code: string }) {
   if (state?.status === "success") {
     return (
       <div className="flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-8 text-center">
-        <h1 className="text-xl font-semibold text-foreground">Inscrição recebida! 💛</h1>
+        <h1 className="font-display text-2xl font-semibold text-foreground">Inscrição recebida! 💛</h1>
         <p className="text-sm text-muted-foreground">
           Muito obrigada por se inscrever! Nossa equipe vai entrar em contato em breve.
         </p>
@@ -48,7 +48,7 @@ export function PublicEnrollmentForm({ code }: { code: string }) {
   if (state?.status === "duplicate") {
     return (
       <div className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-card p-8 text-center">
-        <h1 className="text-xl font-semibold text-foreground">Você já tem cadastro 💛</h1>
+        <h1 className="font-display text-2xl font-semibold text-foreground">Você já tem cadastro 💛</h1>
         <p className="text-sm text-muted-foreground">
           Encontramos um cadastro com esses dados. Nenhuma inscrição nova foi criada.
         </p>

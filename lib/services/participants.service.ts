@@ -48,48 +48,99 @@ export function displayName(row: Pick<ParticipantRow, "full_name" | "anonymized_
   return row.anonymized_at ? "Participante removida" : row.full_name;
 }
 
-export async function listParticipants(filters: ParticipantFilters = {}) {
-  const supabase = await createClient();
+const PARTICIPANT_LIST_SELECT =
+  "*, leader:leaders!participants_current_leader_id_fkey(id, profile:profiles(full_name)), group:groups!participants_current_group_id_fkey(id, name)";
 
-  let query = supabase
-    .from("participants")
-    .select(
-      "*, leader:leaders!participants_current_leader_id_fkey(id, profile:profiles(full_name)), group:groups!participants_current_group_id_fkey(id, name)",
-    )
-    .is("deleted_at", null)
-    .order("created_at", { ascending: false });
-
-  if (filters.search) {
-    query = query.ilike("full_name", `%${filters.search}%`);
-  }
-  if (filters.leaderId) {
-    query = query.eq("current_leader_id", filters.leaderId);
-  }
+// Filtros compartilhados entre a lista completa e a paginada.
+function applyParticipantFilters<
+  Q extends {
+    ilike: (c: string, v: string) => Q;
+    eq: (c: string, v: string) => Q;
+    or: (f: string) => Q;
+    gte: (c: string, v: string) => Q;
+    lte: (c: string, v: string) => Q;
+  },
+>(query: Q, filters: ParticipantFilters): Q {
+  let q = query;
+  if (filters.search) q = q.ilike("full_name", `%${filters.search}%`);
+  if (filters.leaderId) q = q.eq("current_leader_id", filters.leaderId);
   if (filters.region) {
-    query = query.or(`city.ilike.%${filters.region}%,neighborhood.ilike.%${filters.region}%`);
+    q = q.or(`city.ilike.%${filters.region}%,neighborhood.ilike.%${filters.region}%`);
   }
-  if (filters.status) {
-    query = query.eq("status", filters.status);
-  }
-  if (filters.groupId) {
-    query = query.eq("current_group_id", filters.groupId);
-  }
-  if (filters.enrolledFrom) {
-    query = query.gte("enrollment_date", filters.enrolledFrom);
-  }
-  if (filters.enrolledTo) {
-    query = query.lte("enrollment_date", filters.enrolledTo);
-  }
+  if (filters.status) q = q.eq("status", filters.status);
+  if (filters.groupId) q = q.eq("current_group_id", filters.groupId);
+  if (filters.enrolledFrom) q = q.gte("enrollment_date", filters.enrolledFrom);
+  if (filters.enrolledTo) q = q.lte("enrollment_date", filters.enrolledTo);
+  return q;
+}
 
-  const { data, error } = await query;
-  if (error) dbError(error, "participants.list");
-
-  return (data ?? []).map((row) => ({
+function toListItem<
+  R extends ParticipantRow & {
+    leader: { id: string; profile: { full_name: string } | null } | null;
+    group: { id: string; name: string } | null;
+  },
+>(row: R) {
+  return {
     ...row,
     full_name: displayName(row),
     leader: row.leader ? { id: row.leader.id, full_name: row.leader.profile?.full_name ?? "" } : null,
     group: row.group,
-  }));
+  };
+}
+
+export async function listParticipants(filters: ParticipantFilters = {}) {
+  const supabase = await createClient();
+
+  const query = applyParticipantFilters(
+    supabase
+      .from("participants")
+      .select(PARTICIPANT_LIST_SELECT)
+      .is("deleted_at", null)
+      .order("created_at", { ascending: false }),
+    filters,
+  );
+
+  const { data, error } = await query;
+  if (error) dbError(error, "participants.list");
+
+  return (data ?? []).map(toListItem);
+}
+
+// Versão paginada para as telas de lista: busca só a página pedida e o total
+// (para "Página 2 de 9"). A lista inteira de centenas de nomes não precisa
+// ir para o celular de uma vez.
+export const PARTICIPANTS_PAGE_SIZE = 20;
+
+export async function listParticipantsPage(
+  filters: ParticipantFilters = {},
+  page = 1,
+  pageSize = PARTICIPANTS_PAGE_SIZE,
+) {
+  const supabase = await createClient();
+  const safePage = Number.isFinite(page) && page >= 1 ? Math.floor(page) : 1;
+  const from = (safePage - 1) * pageSize;
+
+  const query = applyParticipantFilters(
+    supabase
+      .from("participants")
+      .select(PARTICIPANT_LIST_SELECT, { count: "exact" })
+      .is("deleted_at", null)
+      .order("created_at", { ascending: false })
+      .order("id", { ascending: true }),
+    filters,
+  ).range(from, from + pageSize - 1);
+
+  const { data, error, count } = await query;
+  if (error) dbError(error, "participants.listPage");
+
+  const total = count ?? 0;
+  return {
+    items: (data ?? []).map(toListItem),
+    total,
+    page: safePage,
+    pageSize,
+    totalPages: Math.max(1, Math.ceil(total / pageSize)),
+  };
 }
 
 export async function getParticipant(id: string) {
