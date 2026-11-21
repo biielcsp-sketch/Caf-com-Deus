@@ -30,7 +30,7 @@ async function hit(rpc: RateLimitRpc, key: string) {
   if (error) {
     // Uma falha no rate limiter (ex.: instabilidade momentânea do banco)
     // nunca pode travar uma ação legítima — loga e libera (fail-open).
-    console.error(`[rate-limit] ${rpc} falhou, liberando por padrão:`, error.message);
+    console.error("[rate-limit] %s falhou, liberando por padrão:", rpc, error.message);
     return true;
   }
 

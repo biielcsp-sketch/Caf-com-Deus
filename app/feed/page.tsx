@@ -27,7 +27,7 @@ export default async function FeedPage() {
   // desaparecer — um erro de leitura era indistinguível de "não há nada".
   function aoFalhar<T>(bloco: string, fallback: T) {
     return (e: unknown): T => {
-      console.error(`[feed] ${bloco}:`, e);
+      console.error("[feed] %s:", bloco, e);
       return fallback;
     };
   }

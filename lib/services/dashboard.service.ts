@@ -66,7 +66,7 @@ export async function getAdminDashboard() {
     "enrollments",
   ];
   resultados.forEach((r, i) => {
-    if (r.error) console.error(`[dashboard] consulta ${NOMES[i]} falhou:`, r.error.message);
+    if (r.error) console.error("[dashboard] consulta %s falhou:", NOMES[i], r.error.message);
   });
 
   const [

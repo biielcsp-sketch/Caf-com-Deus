@@ -25,7 +25,7 @@ export function dbError(
   context: string,
   fallback = "Não foi possível completar a operação. Tente novamente.",
 ): never {
-  console.error(`[db:${context}]`, error);
+  console.error("[db:%s]", context, error);
   // Revisão v41 (item 2.9): o erro original vai junto em `cause`. Sem isso,
   // `isRlsDenied()` (auth-audit.service.ts) nunca casava com nada: ele
   // procura o texto do erro 42501 do Postgres, mas quem chegava até ele era
@@ -50,7 +50,7 @@ export function toUserMessage(
   fallback = "Ocorreu um erro. Tente novamente.",
 ): string {
   if (e instanceof AppError) return e.message;
-  console.error(`[action:${context}]`, e);
+  console.error("[action:%s]", context, e);
   return fallback;
 }
 

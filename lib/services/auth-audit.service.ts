@@ -44,7 +44,7 @@ export async function logAuthEvent(
       p_metadata: metadata ?? null,
     } as unknown as Parameters<typeof supabase.rpc<"app_log_auth_event">>[1]);
   } catch (e) {
-    console.error(`[auth-audit] falha ao registrar evento "${event}":`, e);
+    console.error('[auth-audit] falha ao registrar evento "%s":', event, e);
   }
 }
 

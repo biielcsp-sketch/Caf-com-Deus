@@ -25,6 +25,7 @@ export async function getBibleChapter(abbrev: string, chapter: number): Promise<
 
   let raw: string;
   try {
+    // nosemgrep: javascript.lang.security.audit.path-traversal.path-join-resolve-traversal -- abbrev validado por regex acima
     raw = await readFile(path.join(BIBLE_DIR, `${abbrev}.json`), "utf-8");
   } catch {
     throw new AppError("Livro não encontrado.");

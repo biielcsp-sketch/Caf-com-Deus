@@ -24,6 +24,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
+      # LayoutProps/PageProps são tipos gerados pelo Next; sem isso o tsc falha antes do build.
+      - run: npx next typegen
       - run: npm run typecheck
       - run: npm test
       - name: Build
