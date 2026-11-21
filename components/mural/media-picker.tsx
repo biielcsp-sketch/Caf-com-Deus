@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type DragEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Images, Trash2, Plus } from "lucide-react";
 
 /* ===================================================================
@@ -43,7 +43,6 @@ export function MediaPicker({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [previews, setPreviews] = useState<Preview[]>([]);
-  const [arrastando, setArrastando] = useState(false);
 
   // As URLs de prévia apontam para memória do navegador e precisam ser
   // liberadas quando o arquivo sai da lista, senão ficam retidas até a
@@ -73,13 +72,6 @@ export function MediaPicker({
   function escolher(lista: FileList | null) {
     if (!lista || lista.length === 0) return;
     onFilesSelected(Array.from(lista));
-  }
-
-  function aoSoltar(e: DragEvent<HTMLLabelElement>) {
-    e.preventDefault();
-    setArrastando(false);
-    if (disabled) return;
-    escolher(e.dataTransfer.files);
   }
 
   const ehVideo = files[0]?.type.startsWith("video/") ?? false;
@@ -124,47 +116,32 @@ export function MediaPicker({
       )}
 
       {mostrarSeletor && (
-        <label
-          onDragOver={(e) => {
-            e.preventDefault();
-            if (!disabled) setArrastando(true);
-          }}
-          onDragLeave={() => setArrastando(false)}
-          onDrop={aoSoltar}
-          className={`flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors ${
-            arrastando ? "border-primary bg-muted" : "border-border bg-card hover:bg-muted"
-          } ${disabled ? "pointer-events-none opacity-60" : ""}`}
-        >
-          {previews.length === 0 ? (
-            <Images size={40} strokeWidth={1.25} className="text-muted-foreground" />
-          ) : (
-            <Plus size={28} strokeWidth={1.5} className="text-muted-foreground" />
-          )}
-          <div className="flex flex-col gap-0.5">
-            <p className="text-sm font-medium text-foreground">
-              {previews.length === 0 ? "Arraste a foto ou o vídeo aqui" : "Adicionar mais fotos"}
-            </p>
-            <p className="text-xs text-muted-foreground">{hint}</p>
-          </div>
-          <span className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
-            Selecionar do dispositivo
-          </span>
-          <input
-            ref={inputRef}
-            type="file"
-            accept={accept}
-            multiple
-            disabled={disabled}
-            onChange={(e) => {
-              escolher(e.target.files);
-              // Zera o valor do input: sem isso, escolher de novo o mesmo
-              // arquivo (ex. depois de removê-lo da lista) não dispara o
-              // onChange, porque para o navegador nada mudou.
-              e.target.value = "";
-            }}
-            className="sr-only"
-          />
-        </label>
+        <div className="flex flex-wrap items-center gap-3">
+          <label
+            className={`glass-inner flex h-12 cursor-pointer items-center gap-2 rounded-full px-5 text-sm font-semibold text-foreground ${
+              disabled ? "pointer-events-none opacity-60" : ""
+            }`}
+          >
+            {previews.length === 0 ? <Images size={20} /> : <Plus size={20} />}
+            {previews.length === 0 ? "Adicionar foto ou vídeo" : "Adicionar mais fotos"}
+            <input
+              ref={inputRef}
+              type="file"
+              accept={accept}
+              multiple
+              disabled={disabled}
+              onChange={(e) => {
+                escolher(e.target.files);
+                // Zera o valor do input: sem isso, escolher de novo o mesmo
+                // arquivo (ex. depois de removê-lo da lista) não dispara o
+                // onChange, porque para o navegador nada mudou.
+                e.target.value = "";
+              }}
+              className="sr-only"
+            />
+          </label>
+          <span className="text-xs text-muted-foreground">{hint}</span>
+        </div>
       )}
     </div>
   );
