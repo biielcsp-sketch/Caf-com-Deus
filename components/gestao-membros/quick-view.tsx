@@ -181,7 +181,7 @@ export function DistributionQuickBar({
           onClick={() => setAberto("participante")}
           className="btn btn-secondary"
         >
-          <IdCard size={14} /> Ficha da participante
+          <IdCard size={14} /> Ficha participante
         </button>
         {leader && (
           <button
@@ -189,7 +189,7 @@ export function DistributionQuickBar({
             onClick={() => setAberto("lider")}
             className="btn btn-secondary"
           >
-            <UserRound size={14} /> Ficha da líder
+            <UserRound size={14} /> Ficha líder
           </button>
         )}
       </div>

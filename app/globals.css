@@ -209,6 +209,13 @@ a.bg-card {
   align-items: center;
   gap: 0.5rem;
 }
+/* Rede de segurança: se faltar largura, o botão encolhe em vez de sair da tela. */
+.btn-row > .btn {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* Botão verde de vidro. */
 .glass-green,
