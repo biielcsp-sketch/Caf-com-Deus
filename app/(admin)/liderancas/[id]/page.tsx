@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import { getCurrentProfile } from "@/lib/services/profiles.service";
+import { ImpersonateButton } from "@/components/accounts/impersonate-button";
 import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { BackLink } from "@/components/ui/BackLink";
 import { getLeader } from "@/lib/services/leaders.service";
@@ -19,6 +21,9 @@ export default async function LiderancaPage({
   const { id } = await params;
   const leader = await getLeader(id);
   if (!leader) notFound();
+  const me = await getCurrentProfile();
+  // "Ver como esta pessoa": só Desenvolvedor, nunca na própria conta.
+  const canImpersonate = me?.role === "desenvolvedor" && leader.profile_id !== me.id;
 
   const [participants, hostedGroups] = await Promise.all([
     listParticipants({ leaderId: id }),
@@ -52,6 +57,9 @@ export default async function LiderancaPage({
           )}
         </div>
         <div className="btn-row shrink-0 items-start">
+          {canImpersonate && (
+            <ImpersonateButton profileId={leader.profile_id} name={leader.profile?.full_name ?? "esta líder"} compact />
+          )}
           <ToggleStatusButton id={leader.id} status={leader.status} />
           <LeaderDeleteButton
             id={leader.id}
