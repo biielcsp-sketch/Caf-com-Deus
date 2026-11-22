@@ -554,6 +554,54 @@ export type Database = {
           },
         ]
       }
+      impersonation_sessions: {
+        Row: {
+          developer_id: string
+          ended_at: string | null
+          id: string
+          ip_address: string | null
+          started_at: string
+          target_id: string | null
+          target_name: string
+          user_agent: string | null
+        }
+        Insert: {
+          developer_id: string
+          ended_at?: string | null
+          id?: string
+          ip_address?: string | null
+          started_at?: string
+          target_id?: string | null
+          target_name: string
+          user_agent?: string | null
+        }
+        Update: {
+          developer_id?: string
+          ended_at?: string | null
+          id?: string
+          ip_address?: string | null
+          started_at?: string
+          target_id?: string | null
+          target_name?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "impersonation_sessions_developer_id_fkey"
+            columns: ["developer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "impersonation_sessions_target_id_fkey"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leaders: {
         Row: {
           admin_notes: string | null

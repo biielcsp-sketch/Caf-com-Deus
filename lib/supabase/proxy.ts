@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { IMPERSONATION_COOKIE } from "@/lib/impersonation";
 
 // S3 (headers de segurança): tentamos primeiro o padrão oficial do Next.js
 // (nonce por requisição + 'strict-dynamic', documentado para o App Router) e
@@ -159,8 +160,11 @@ export async function updateSession(request: NextRequest) {
   // nada que já não fosse dela.
   // Rotas de API ficam de fora: um 307 no lugar de uma imagem de QR Code
   // só produziria erro estranho, e elas não são caminho de navegação.
+  // Durante o "Ver como esta pessoa" o desenvolvedor não pode ser empurrado
+  // para /trocar-senha: a senha provisória é da pessoa visitada, não dele.
   if (
     user?.user_metadata?.must_change_password === true &&
+    !request.cookies.has(IMPERSONATION_COOKIE) &&
     path !== "/trocar-senha" &&
     !path.startsWith("/api/")
   ) {

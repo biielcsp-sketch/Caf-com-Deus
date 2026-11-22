@@ -4,6 +4,7 @@ import { isLeaderRole, isHostRole, isPeopleManagerRole, adminShellPropsFor } fro
 import { getMyAvatarSignedUrl } from "@/lib/services/avatar.service";
 import { LiderShell } from "@/components/lider-shell";
 import { AdminShell } from "@/components/admin-shell";
+import { ImpersonationBanner } from "@/components/impersonation-banner";
 
 export default async function LiderLayout({ children }: { children: React.ReactNode }) {
   const profile = await getCurrentProfile();
@@ -14,9 +15,12 @@ export default async function LiderLayout({ children }: { children: React.ReactN
   if (profile.role === "gestora_de_pessoas") {
     const avatar = await getMyAvatarSignedUrl();
     return (
-      <AdminShell userName={profile.full_name} avatarUrl={avatar} {...adminShellPropsFor(profile.role)}>
-        {children}
-      </AdminShell>
+      <>
+        <ImpersonationBanner />
+        <AdminShell userName={profile.full_name} avatarUrl={avatar} {...adminShellPropsFor(profile.role)}>
+          {children}
+        </AdminShell>
+      </>
     );
   }
   if (isAdminRole(profile.role)) redirect("/dashboard");
@@ -27,12 +31,15 @@ export default async function LiderLayout({ children }: { children: React.ReactN
   const avatarUrl = await getMyAvatarSignedUrl();
 
   return (
-    <LiderShell
-      userName={profile.full_name}
-      avatarUrl={avatarUrl}
-      canManageMembers={isPeopleManagerRole(profile.role)}
-    >
-      {children}
-    </LiderShell>
+    <>
+      <ImpersonationBanner />
+      <LiderShell
+        userName={profile.full_name}
+        avatarUrl={avatarUrl}
+        canManageMembers={isPeopleManagerRole(profile.role)}
+      >
+        {children}
+      </LiderShell>
+    </>
   );
 }
