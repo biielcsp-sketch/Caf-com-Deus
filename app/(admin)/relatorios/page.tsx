@@ -91,7 +91,7 @@ export default async function RelatoriosPage({ searchParams }: { searchParams: P
         </label>
         <button
           type="submit"
-          className="self-end rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+          className="btn btn-primary self-end"
         >
           Atualizar
         </button>

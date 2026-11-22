@@ -51,7 +51,7 @@ export function EncontrosPanel({
         <p className="text-sm text-muted-foreground">{filtered.length} encontrados</p>
         <Link
           href="/encontros/novo"
-          className="flex items-center justify-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
+          className="btn btn-primary"
         >
           <Plus size={16} />
           Novo encontro

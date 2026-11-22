@@ -48,7 +48,7 @@ export default async function RedistribuicaoPage({
         </select>
         <button
           type="submit"
-          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+          className="btn btn-primary"
         >
           Filtrar
         </button>

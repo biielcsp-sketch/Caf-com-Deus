@@ -62,7 +62,7 @@ export function VisitorCard({
                 type="button"
                 disabled={pending}
                 onClick={() => run(() => confirmVisitorContactAction(participantId))}
-                className="rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+                className="btn btn-primary"
               >
                 {pending ? "Salvando..." : "Já entrei em contato"}
               </button>

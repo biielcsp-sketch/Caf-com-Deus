@@ -130,7 +130,7 @@ export function LeaderCreateForm() {
             <button
               type="button"
               onClick={() => setPassword(generatePassword())}
-              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+              className="btn btn-secondary shrink-0"
             >
               <RefreshCw size={16} />
               Gerar

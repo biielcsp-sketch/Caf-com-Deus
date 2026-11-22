@@ -59,9 +59,9 @@ export default async function ParticipantesPage({
         <Link
           href="/participantes/novo"
           aria-label="Nova participante"
-          className="glass-green flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
+          className="btn btn-primary btn-icon shrink-0"
         >
-          <Plus size={22} strokeWidth={2.2} />
+          <Plus size={18} strokeWidth={2.2} />
         </Link>
       </PageHeader>
 

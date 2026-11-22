@@ -128,7 +128,7 @@ export function PushOptIn({ publicKey, somenteConvite = false }: { publicKey: st
           type="button"
           onClick={ligar}
           disabled={ocupado}
-          className="shrink-0 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+          className="btn btn-primary shrink-0"
         >
           {ocupado ? "Ativando..." : "Ativar neste aparelho"}
         </button>

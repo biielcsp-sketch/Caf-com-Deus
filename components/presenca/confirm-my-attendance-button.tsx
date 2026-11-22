@@ -20,7 +20,7 @@ export function ConfirmMyAttendanceButton({ meetingId }: { meetingId: string }) 
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+        className="btn btn-primary"
       >
         {pending ? "Confirmando..." : "Confirmar presença"}
       </button>

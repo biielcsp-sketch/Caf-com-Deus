@@ -118,11 +118,11 @@ export function MediaPicker({
       {mostrarSeletor && (
         <div className="flex flex-wrap items-center gap-3">
           <label
-            className={`glass-inner flex h-12 cursor-pointer items-center gap-2 rounded-full px-5 text-sm font-semibold text-foreground ${
+            className={`btn btn-secondary ${
               disabled ? "pointer-events-none opacity-60" : ""
             }`}
           >
-            {previews.length === 0 ? <Images size={20} /> : <Plus size={20} />}
+            {previews.length === 0 ? <Images size={16} /> : <Plus size={16} />}
             {previews.length === 0 ? "Adicionar foto ou vídeo" : "Adicionar mais fotos"}
             <input
               ref={inputRef}

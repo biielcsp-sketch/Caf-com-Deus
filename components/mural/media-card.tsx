@@ -324,7 +324,7 @@ export function MediaCard({
                 type="submit"
                 disabled={pending || !draft.trim()}
                 aria-label="Enviar comentário"
-                className="shrink-0 rounded-lg bg-primary px-3 py-2.5 text-primary-foreground disabled:opacity-50"
+                className="btn btn-primary shrink-0"
               >
                 <Send size={16} />
               </button>

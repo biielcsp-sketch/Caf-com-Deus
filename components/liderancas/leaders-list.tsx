@@ -43,16 +43,16 @@ export function LeadersList({ leaders }: { leaders: Leader[] }) {
                   style={{ width: `${pct}%` }}
                 />
               </div>
-            </Link>
-            <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
-              <span className="text-xs text-muted-foreground">
+              <p className="mt-1 text-xs text-muted-foreground">
                 {l.occupied}/{l.max_capacity} participantes
-              </span>
+              </p>
+            </Link>
+            <div className="btn-row sm:shrink-0">
               <Link
                 href={`/liderancas/${l.id}`}
-                className="flex items-center gap-1.5 glass-inner rounded-full px-3 py-1 text-xs font-medium text-foreground"
+                className="btn btn-secondary"
               >
-                <Pencil size={13} />
+                <Pencil size={14} />
                 Editar
               </Link>
               <LeaderDeleteButton id={l.id} nome={l.full_name} cafes={l.cafes} compact />

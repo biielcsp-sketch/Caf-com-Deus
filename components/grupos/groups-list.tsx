@@ -39,19 +39,16 @@ export function GroupsList({ groups }: { groups: Group[] }) {
             <p className="truncate text-xs text-muted-foreground">
               Líder: {g.leader_name ?? "a definir"} · {g.region ?? "sem região"}
             </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {g.occupied}/{g.capacity} vagas · {STATUS_LABELS[g.status]}
+            </p>
           </Link>
-          <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
-            <span className="text-xs text-muted-foreground">
-              {g.occupied}/{g.capacity} vagas
-            </span>
-            <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-foreground">
-              {STATUS_LABELS[g.status]}
-            </span>
+          <div className="btn-row sm:shrink-0">
             <Link
               href={`/grupos/${g.id}`}
-              className="flex items-center gap-1.5 glass-inner rounded-full px-3 py-1 text-xs font-medium text-foreground"
+              className="btn btn-secondary"
             >
-              <Pencil size={13} />
+              <Pencil size={14} />
               Editar
             </Link>
             <GroupDeleteButton id={g.id} nome={g.name} compact />

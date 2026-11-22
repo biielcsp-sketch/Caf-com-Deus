@@ -175,11 +175,11 @@ export function DistributionQuickBar({
           </span>
         </p>
       )}
-      <div className="flex flex-wrap gap-2">
+      <div className="btn-row">
         <button
           type="button"
           onClick={() => setAberto("participante")}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted"
+          className="btn btn-secondary"
         >
           <IdCard size={14} /> Ficha da participante
         </button>
@@ -187,7 +187,7 @@ export function DistributionQuickBar({
           <button
             type="button"
             onClick={() => setAberto("lider")}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted"
+            className="btn btn-secondary"
           >
             <UserRound size={14} /> Ficha da líder
           </button>

@@ -235,7 +235,7 @@ export function MediaUpload({
             <button
               type="button"
               onClick={() => window.location.reload()}
-              className="rounded-lg border border-border px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+              className="btn btn-secondary"
             >
               Recarregar página
             </button>

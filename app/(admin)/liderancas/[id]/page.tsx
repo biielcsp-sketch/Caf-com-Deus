@@ -35,7 +35,7 @@ export default async function LiderancaPage({
   return (
     <div className="flex flex-col gap-4">
       <BackLink href="/liderancas" label="Líderes" />
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground">{leader.profile?.full_name}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -51,7 +51,7 @@ export default async function LiderancaPage({
             </p>
           )}
         </div>
-        <div className="flex shrink-0 items-start gap-2">
+        <div className="btn-row shrink-0 items-start">
           <ToggleStatusButton id={leader.id} status={leader.status} />
           <LeaderDeleteButton
             id={leader.id}
