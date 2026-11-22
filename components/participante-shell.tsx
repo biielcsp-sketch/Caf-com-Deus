@@ -67,12 +67,12 @@ export function ParticipanteShell({
                 <X size={20} />
               </button>
             </div>
-            <nav className="flex flex-1 flex-col gap-1">
+            <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
               {NAV_ITEMS.map((item) => (
                 <NavLink key={item.href} {...item} onNavigate={() => setMenuOpen(false)} />
               ))}
             </nav>
-            <div className="mt-4 border-t border-border pt-4">
+            <div className="mt-4 shrink-0 border-t border-border pt-4">
               <SidebarIdentity userName={userName} avatarUrl={avatarUrl} onNavigate={() => setMenuOpen(false)} />
               <form action={logout}>
                 <button

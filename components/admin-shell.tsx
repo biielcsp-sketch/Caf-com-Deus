@@ -143,14 +143,14 @@ export function AdminShell({
                 <X size={20} />
               </button>
             </div>
-            <nav className="flex flex-1 flex-col gap-1">
+            <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
               <NotificationsNavItem onNavigate={() => setMenuOpen(false)} />
               {navItems.map((item) => (
                 <NavLink key={item.href} {...item} onNavigate={() => setMenuOpen(false)} />
               ))}
               {showMyCafe && <MyCafeSection onNavigate={() => setMenuOpen(false)} />}
             </nav>
-            <div className="mt-4 border-t border-border pt-4">
+            <div className="mt-4 shrink-0 border-t border-border pt-4">
               <SidebarIdentity
                 userName={userName}
                 avatarUrl={avatarUrl}
