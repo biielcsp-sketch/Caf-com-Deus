@@ -4,7 +4,15 @@ import { useState, useTransition } from "react";
 import { startImpersonationAction } from "@/app/actions/impersonation";
 import { Button } from "@/components/ui/Button";
 
-export function ImpersonateButton({ profileId, name }: { profileId: string; name: string }) {
+export function ImpersonateButton({
+  profileId,
+  name,
+  compact = false,
+}: {
+  profileId: string;
+  name: string;
+  compact?: boolean;
+}) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -34,7 +42,7 @@ export function ImpersonateButton({ profileId, name }: { profileId: string; name
       {error && <p className="text-sm text-danger">{error}</p>}
       <div>
         <Button variant="secondary" disabled={isPending} onClick={handleClick}>
-          {isPending ? "Entrando..." : "Ver como esta pessoa"}
+          {isPending ? "Entrando..." : compact ? "Ver como" : "Ver como esta pessoa"}
         </Button>
       </div>
     </div>
