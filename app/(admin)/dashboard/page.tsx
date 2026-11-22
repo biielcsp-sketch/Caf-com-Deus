@@ -37,7 +37,6 @@ export default async function DashboardPage() {
       </div>
 
       <PushOptIn publicKey={getVapidPublicKey()} somenteConvite />
-      <PendingContactsCard contacts={semContato} mode="gestao" />
 
       {/* Destaque: total de participantes */}
       <section
@@ -116,6 +115,8 @@ export default async function DashboardPage() {
           },
         ]}
       />
+
+      <PendingContactsCard contacts={semContato} mode="gestao" />
     </div>
   );
 }
