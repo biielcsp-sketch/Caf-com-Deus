@@ -3,6 +3,7 @@ import { getCurrentProfile, isAdminRole } from "@/lib/services/profiles.service"
 import { isLeaderRole } from "@/lib/role-labels";
 import { getMyAvatarSignedUrl } from "@/lib/services/avatar.service";
 import { ParticipanteShell } from "@/components/participante-shell";
+import { ImpersonationBanner } from "@/components/impersonation-banner";
 
 export default async function ParticipanteLayout({ children }: { children: React.ReactNode }) {
   const profile = await getCurrentProfile();
@@ -15,8 +16,11 @@ export default async function ParticipanteLayout({ children }: { children: React
   const avatarUrl = await getMyAvatarSignedUrl();
 
   return (
-    <ParticipanteShell userName={profile.full_name} avatarUrl={avatarUrl}>
-      {children}
-    </ParticipanteShell>
+    <>
+      <ImpersonationBanner />
+      <ParticipanteShell userName={profile.full_name} avatarUrl={avatarUrl}>
+        {children}
+      </ParticipanteShell>
+    </>
   );
 }

@@ -8,6 +8,7 @@ import { ResetPasswordForm } from "@/components/accounts/reset-password-form";
 import { UpdateEmailForm } from "@/components/accounts/update-email-form";
 import { EditAccountForm } from "@/components/accounts/edit-account-form";
 import { AccountDangerZone } from "@/components/accounts/account-danger-zone";
+import { ImpersonateButton } from "@/components/accounts/impersonate-button";
 import { ROLE_LABELS } from "@/lib/role-labels";
 
 export default async function ContaDetalhePage({
@@ -36,6 +37,16 @@ export default async function ContaDetalhePage({
         title={account.full_name}
         description={`${account.email ?? "sem e-mail"} · ${ROLE_LABELS[account.role]}${account.active ? "" : " · Inativa"}`}
       />
+
+      {profile?.role === "desenvolvedor" && account.id !== profile.id && account.active && (
+        <Card className="max-w-md p-6">
+          <p className="mb-1 text-sm font-semibold text-foreground">Ver como esta pessoa</p>
+          <p className="mb-3 text-sm text-muted-foreground">
+            Entra no sistema com a conta dela, exatamente como ela vê. Cada entrada fica registrada.
+          </p>
+          <ImpersonateButton profileId={account.id} name={account.full_name} />
+        </Card>
+      )}
 
       <Card className="max-w-md p-6">
         <p className="mb-3 text-sm font-semibold text-foreground">Editar conta</p>
