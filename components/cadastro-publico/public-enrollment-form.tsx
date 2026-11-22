@@ -55,7 +55,7 @@ export function PublicEnrollmentForm({ code }: { code: string }) {
         <div className="flex w-full flex-col gap-2 border-t border-border pt-5">
           <a
             href="/login"
-            className="w-full rounded-xl bg-primary px-4 py-3.5 text-base font-medium text-primary-foreground"
+            className="btn btn-primary w-full"
           >
             Já tenho acesso: entrar
           </a>

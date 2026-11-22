@@ -242,7 +242,7 @@ function AttentionCard({ item }: { item: EnrollmentReviewItem }) {
         ))}
       </ul>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      <div className="btn-row mt-3">
         <form action={approveAction}>
           <Button type="submit" disabled={approvePending} variant="secondary">
             {approvePending ? "Aprovando..." : "Aprovar manualmente"}

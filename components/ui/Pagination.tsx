@@ -32,8 +32,8 @@ export function Pagination({
 
   const first = (page - 1) * pageSize + 1;
   const last = Math.min(page * pageSize, total);
-  const btn = "glass-inner flex h-11 items-center gap-1.5 rounded-full px-4 text-sm font-medium text-foreground";
-  const off = "glass-inner flex h-11 items-center gap-1.5 rounded-full px-4 text-sm font-medium text-muted-foreground opacity-50";
+  const btn = "btn btn-secondary";
+  const off = "btn btn-secondary";
 
   return (
     <nav aria-label="Paginação" className="mt-5 flex flex-col items-center gap-3">

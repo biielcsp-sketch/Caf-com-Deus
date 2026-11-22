@@ -24,11 +24,11 @@ export function FollowUpManage({
 
   return (
     <div className="mt-2">
-      <div className="flex flex-wrap gap-2">
+      <div className="btn-row">
         <button
           type="button"
           onClick={() => setEditando((v) => !v)}
-          className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1 text-xs font-medium hover:bg-muted"
+          className="btn btn-secondary"
         >
           <Pencil size={12} /> {editando ? "Fechar edição" : "Editar"}
         </button>
@@ -36,7 +36,7 @@ export function FollowUpManage({
           <button
             type="button"
             onClick={() => setConfirmando(true)}
-            className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1 text-xs font-medium text-danger hover:bg-danger/10"
+            className="btn btn-danger"
           >
             <Trash2 size={12} /> Excluir
           </button>
@@ -53,7 +53,7 @@ export function FollowUpManage({
                   setConfirmando(false);
                 })
               }
-              className="rounded-lg bg-danger px-2.5 py-1 font-medium text-white disabled:opacity-60"
+              className="btn btn-danger"
             >
               {pending ? "Excluindo..." : "Sim, excluir"}
             </button>

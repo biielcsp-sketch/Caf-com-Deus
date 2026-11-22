@@ -69,7 +69,7 @@ export function ParticipantsFilters({
 
       {variant === "admin" && (
         <details className="group" open={Boolean(defaults.leaderId || defaults.groupId || defaults.region || defaults.enrolledFrom || defaults.enrolledTo)}>
-          <summary className="glass-inner flex h-11 w-fit cursor-pointer list-none items-center gap-2 rounded-full px-4 text-sm font-medium text-foreground">
+          <summary className="btn btn-secondary w-fit cursor-pointer list-none">
             <SlidersHorizontal size={16} />
             Mais filtros
           </summary>
@@ -109,7 +109,7 @@ export function ParticipantsFilters({
               Inscrita até
               <input name="enrolledTo" type="date" defaultValue={defaults.enrolledTo} className={fieldClass} />
             </label>
-            <button type="submit" className="glass-green h-12 rounded-full px-5 text-sm font-semibold sm:col-span-2">
+            <button type="submit" className="btn btn-primary sm:col-span-2">
               Aplicar filtros
             </button>
           </div>

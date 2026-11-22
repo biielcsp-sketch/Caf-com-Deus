@@ -321,7 +321,7 @@ function MaterialCard({
           <button
             type="button"
             onClick={open}
-            className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+            className="btn btn-secondary"
           >
             <Download size={15} />
             Abrir
@@ -331,7 +331,7 @@ function MaterialCard({
               <button
                 type="button"
                 onClick={() => setEditing(true)}
-                className="rounded-lg border border-border p-2 text-foreground hover:bg-muted"
+                className="btn btn-secondary"
                 aria-label="Editar material"
               >
                 <Pencil size={15} />

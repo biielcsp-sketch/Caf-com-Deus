@@ -53,7 +53,7 @@ export function AccountDangerZone({
   return (
     <div className="flex flex-col gap-3">
       {error && <p className="text-sm text-danger">{error}</p>}
-      <div className="flex flex-wrap gap-2">
+      <div className="btn-row">
         {!isOwnAccount && (
           <Button variant="secondary" disabled={isPending} onClick={handleToggleActive}>
             {isPending ? "Salvando..." : active ? "Desativar conta" : "Reativar conta"}

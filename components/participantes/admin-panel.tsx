@@ -86,7 +86,7 @@ export function AdminPanel({ participant }: { participant: ParticipantRow }) {
               ? `/gestao-membros/redistribuicao?search=${encodeURIComponent(participant.full_name)}`
               : "/gestao-membros/novas-inscricoes"
           }
-          className="mt-3 inline-block rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+          className="btn btn-primary mt-3"
         >
           {participant.current_leader_id ? "Ir para Redistribuição" : "Distribuir agora"}
         </Link>

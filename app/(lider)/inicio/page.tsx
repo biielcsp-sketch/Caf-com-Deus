@@ -121,7 +121,7 @@ export default async function InicioPage() {
           {data.lastMeetingSummary.registradas < data.lastMeetingSummary.vinculadas && (
             <Link
               href={`/meus-encontros/${data.lastMeeting.id}/presenca`}
-              className="inline-flex h-11 shrink-0 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground"
+              className="btn btn-primary shrink-0"
             >
               Fazer chamada
             </Link>

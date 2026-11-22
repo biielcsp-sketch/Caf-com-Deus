@@ -25,7 +25,7 @@ function ConfirmButton({ participantId, rotulo }: { participantId: string; rotul
       <button
         type="submit"
         disabled={pending}
-        className="glass-inner shrink-0 rounded-full px-3 py-1 text-[11px] font-medium text-primary disabled:opacity-60"
+        className="btn btn-secondary shrink-0"
       >
         {pending ? "Salvando..." : rotulo}
       </button>
@@ -106,7 +106,7 @@ export function PendingContactsCard({
       </ul>
       {contacts.length > VISIVEIS && (
         <details className="mt-2">
-          <summary className="glass-inner flex h-10 w-fit cursor-pointer list-none items-center rounded-full px-4 text-sm font-medium text-foreground">
+          <summary className="btn btn-secondary w-fit cursor-pointer list-none">
             Ver todas ({contacts.length})
           </summary>
           <ul className="mt-2 flex flex-col gap-2">

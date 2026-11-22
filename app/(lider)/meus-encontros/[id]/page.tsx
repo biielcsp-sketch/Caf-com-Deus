@@ -35,7 +35,7 @@ export default async function EncontroPage({
       <PageHeader title={meeting.title}>
         <Link
           href={`/meus-encontros/${id}/presenca`}
-          className="flex items-center justify-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
+          className="btn btn-primary"
         >
           <ClipboardCheck size={16} />
           Chamada

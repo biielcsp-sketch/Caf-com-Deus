@@ -144,7 +144,7 @@ export function InstallPrompt() {
           </div>
           <button
             onClick={handleInstall}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground"
+            className="btn btn-primary mt-3 w-full"
           >
             <Download size={16} />
             Instalar app
@@ -218,7 +218,7 @@ export function InstallPrompt() {
             )}
             <button
               onClick={handleDismiss}
-              className="mt-4 w-full rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground"
+              className="btn btn-primary mt-4 w-full"
             >
               Entendi
             </button>
