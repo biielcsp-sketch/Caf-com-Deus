@@ -24,7 +24,7 @@ export async function listLeaders() {
 
   // Ocupação vem do serviço dedicado, que ignora participantes excluídas —
   // a contagem embutida não ignorava e mostrava líder "lotada" sem estar.
-  const { porLider } = await getOcupacaoAtual();
+  const { porLider, visitantesPorLider } = await getOcupacaoAtual();
 
   return (data ?? [])
     .map((l) => ({
@@ -33,6 +33,7 @@ export async function listLeaders() {
     email: l.profile?.email ?? null,
     phone: l.profile?.phone ?? null,
     occupied: porLider.get(l.id) ?? 0,
+    visitors: visitantesPorLider.get(l.id) ?? 0,
     // Nomes dos cafés que ficariam sem responsável se ela fosse excluída —
     // a confirmação de exclusão precisa avisar isso pelo nome.
     cafes: (l.groups ?? []).map((g) => g.name),

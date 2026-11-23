@@ -44,7 +44,7 @@ export function LeadersList({ leaders }: { leaders: Leader[] }) {
                 />
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                {l.occupied}/{l.max_capacity} participantes
+                {l.occupied}/{l.max_capacity} membros{l.visitors > 0 && ` · ${l.visitors} visitante${l.visitors > 1 ? "s" : ""}`}
               </p>
             </Link>
             <div className="btn-row sm:shrink-0">

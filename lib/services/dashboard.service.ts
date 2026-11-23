@@ -126,7 +126,7 @@ export async function getLeaderDashboard(leaderId: string) {
 
   const { data: myParticipants } = await supabase
     .from("participants")
-    .select("id, status")
+    .select("id, status, is_visitor")
     .eq("current_leader_id", leaderId)
     .is("deleted_at", null);
 
@@ -181,8 +181,18 @@ export async function getLeaderDashboard(leaderId: string) {
   );
   const needingAttention = [...alertsMap.values()].filter(precisaAtencaoPastoral).length;
 
+  // Inativa libera a vaga (mesma regra de lib/services/occupancy.service.ts):
+  // o número da tela inicial da líder não pode contá-la, senão destoa do x/y
+  // de Líderes, Cafés e Dashboard.
+  // Visitante também não ocupa vaga: membros, visitantes e inativas são três
+  // grupos separados, e o painel mostra cada um.
+  const inactiveCount = (myParticipants ?? []).filter((p) => p.status === "inativa").length;
+  const visitorCount = (myParticipants ?? []).filter((p) => p.status !== "inativa" && p.is_visitor).length;
+
   return {
-    participantCount: myParticipants?.length ?? 0,
+    participantCount: (myParticipants?.length ?? 0) - inactiveCount - visitorCount,
+    visitorCount,
+    inactiveCount,
     lastMeeting,
     lastMeetingSummary,
     nextMeeting,
