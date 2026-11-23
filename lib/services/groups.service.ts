@@ -70,7 +70,7 @@ export async function listGroups(filters: GroupFilters = {}) {
 
   if (error) dbError(error, "groups.list");
 
-  const { porGrupo } = await getOcupacaoAtual();
+  const { porGrupo, visitantesPorGrupo } = await getOcupacaoAtual();
 
   return (data ?? []).map((g) => ({
     ...g,
@@ -79,6 +79,7 @@ export async function listGroups(filters: GroupFilters = {}) {
     // temporário, mas que precisa aparecer na tela até alguém assumir.
     semLider: g.leader_id === null,
     occupied: porGrupo.get(g.id) ?? 0,
+    visitors: visitantesPorGrupo.get(g.id) ?? 0,
   }));
 }
 

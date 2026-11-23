@@ -71,7 +71,9 @@ export default async function InicioPage() {
           Olá, {profile?.full_name.split(" ")[0]}
         </h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
-          {data.participantCount} mulher(es) sob seu acompanhamento
+          {data.participantCount} membro(s) no seu café
+          {data.visitorCount > 0 && ` · ${data.visitorCount} visitante(s)`}
+          {data.inactiveCount > 0 && ` · ${data.inactiveCount} inativa(s)`}
         </p>
       </div>
 

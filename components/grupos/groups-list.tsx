@@ -40,7 +40,7 @@ export function GroupsList({ groups }: { groups: Group[] }) {
               Líder: {g.leader_name ?? "a definir"} · {g.region ?? "sem região"}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              {g.occupied}/{g.capacity} vagas · {STATUS_LABELS[g.status]}
+              {g.occupied}/{g.capacity} vagas{g.visitors > 0 && ` · ${g.visitors} visitante${g.visitors > 1 ? "s" : ""}`} · {STATUS_LABELS[g.status]}
             </p>
           </Link>
           <div className="btn-row sm:shrink-0">

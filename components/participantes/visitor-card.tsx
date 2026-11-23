@@ -38,14 +38,15 @@ export function VisitorCard({
       {!isVisitor ? (
         <>
           <p className="mt-1 text-sm text-muted-foreground">
-            Marque quando for uma visita. A líder recebe um aviso para entrar em contato, e ela aparece
-            no relatório de presença.
+            Visitante é quem veio ao café mas ainda não faz parte dele: não ocupa vaga. Membro é quem
+            faz parte do café e ocupa vaga. Marque quando for uma visita: a líder recebe um aviso para
+            entrar em contato, e ela aparece no relatório de presença.
           </p>
           <button
             type="button"
             disabled={pending}
             onClick={() => run(() => setVisitorAction(participantId, true))}
-            className="mt-3 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-60"
+            className="btn btn-secondary mt-3"
           >
             {pending ? "Salvando..." : "Marcar como visitante"}
           </button>
@@ -53,10 +54,10 @@ export function VisitorCard({
       ) : (
         <>
           <p className="mt-1 text-sm text-muted-foreground">
-            Marcada como visitante{marcadaEm ? ` em ${marcadaEm}` : ""}.{" "}
+            Marcada como visitante{marcadaEm ? ` em ${marcadaEm}` : ""}: não ocupa vaga no café.{" "}
             {contatoEm ? `Contato confirmado em ${contatoEm}.` : "O contato ainda não foi confirmado."}
           </p>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="btn-row mt-3">
             {!contactConfirmedAt && (
               <button
                 type="button"
@@ -71,7 +72,7 @@ export function VisitorCard({
               type="button"
               disabled={pending}
               onClick={() => run(() => setVisitorAction(participantId, false))}
-              className="rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-60"
+              className="btn btn-secondary"
             >
               Desmarcar visitante
             </button>
