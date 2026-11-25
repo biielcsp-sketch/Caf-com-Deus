@@ -12,7 +12,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 
-// Mural: fotos e vídeos dos cafés. Todas veem; publicam a líder, a
+// Mural: feed com as fotos e vídeos de TODOS os cafés. Todas veem; publicam a líder, a
 // co-líder e a admin. Os arquivos ficam no Google Drive — aqui só passa
 // o que descreve a publicação.
 export default async function MuralPage() {
@@ -61,7 +61,7 @@ export default async function MuralPage() {
       <div className="flex flex-col gap-5">
         <PageHeader
           title="Mural de fotos"
-          description="As fotos e os vídeos dos encontros, num lugar só."
+          description="As fotos e os vídeos de todos os cafés, num lugar só."
         />
 
         {/* O aviso de configuração vem antes do formulário: sem as
@@ -157,7 +157,7 @@ export default async function MuralPage() {
             </p>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="mx-auto flex w-full max-w-xl flex-col gap-5">
             {media.map((item) => (
               <MediaCard
                 key={item.id}

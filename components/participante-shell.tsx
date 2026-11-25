@@ -104,7 +104,8 @@ export function ParticipanteShell({
         <main className="flex-1 p-4 pb-28 md:p-8">{children}</main>
 
         <BottomNav
-          items={[NAV_ITEMS[0], NAV_ITEMS[1], NAV_ITEMS[2], NAV_ITEMS[3]]}
+          // Feed no botão verde do centro (3º lugar); Minha Jornada vai para o 1º.
+          items={[NAV_ITEMS[2], NAV_ITEMS[1], NAV_ITEMS[0], NAV_ITEMS[3]]}
           onMenu={() => setMenuOpen(true)}
         />
       </div>
