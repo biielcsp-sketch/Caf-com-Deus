@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { FileText, Image as ImageIcon, Sheet, Download, Trash2, Pencil } from "lucide-react";
 import {
   registerStudyMaterialAction,
@@ -15,6 +15,7 @@ import {
   STUDY_MAX_SIZE_BYTES,
   STUDY_ALLOWED_EXTENSIONS,
   STUDY_MIME_BY_EXTENSION,
+  studyCoverPath,
   buildStudyStoragePath,
   studyFileExtension,
 } from "@/lib/study-materials";
@@ -46,20 +47,93 @@ function coverStyle(mime: string): { Icon: typeof FileText; className: string } 
   return { Icon: FileText, className: "bg-gradient-to-br from-muted to-muted/60 text-muted-foreground" };
 }
 
-function MaterialCover({ material, big }: { material: StudyMaterial; big?: boolean }) {
-  const aspect = big ? "aspect-[16/9]" : "aspect-[4/3]";
+// Capa do PDF que ainda não existe (estudo enviado antes desta função, ou
+// recém-enviado): quem pode gerenciar gera a imagem da 1ª página aqui, no
+// navegador, e guarda ao lado do arquivo. As demais pessoas só leem. Se algo
+// falhar (rede, PDF protegido), fica o ícone — nunca uma tela de erro.
+const capasEmGeracao = new Set<string>();
+
+function usePdfCover(material: StudyMaterial, gerar: boolean) {
+  const [url, setUrl] = useState<string | null>(null);
+  const urlCriada = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!gerar || capasEmGeracao.has(material.id)) return;
+    capasEmGeracao.add(material.id);
+    let cancelado = false;
+
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data: arquivo, error } = await supabase.storage
+          .from(STUDY_BUCKET)
+          .download(material.storage_path);
+        if (error || !arquivo) throw error ?? new Error("sem arquivo");
+
+        const { gerarCapaDePdf } = await import("@/lib/pdf-cover");
+        const capa = await gerarCapaDePdf(arquivo);
+
+        await supabase.storage
+          .from(STUDY_BUCKET)
+          .upload(studyCoverPath(material.storage_path), capa, {
+            contentType: "image/jpeg",
+            upsert: true,
+          });
+
+        if (!cancelado) {
+          urlCriada.current = URL.createObjectURL(capa);
+          setUrl(urlCriada.current);
+        }
+      } catch {
+        // Fica o ícone; na próxima abertura da tela tenta de novo.
+      } finally {
+        capasEmGeracao.delete(material.id);
+      }
+    })();
+
+    return () => {
+      cancelado = true;
+    };
+  }, [gerar, material.id, material.storage_path]);
+
+  useEffect(
+    () => () => {
+      if (urlCriada.current) URL.revokeObjectURL(urlCriada.current);
+    },
+    [],
+  );
+
+  return url;
+}
+
+function MaterialCover({
+  material,
+  big,
+  canManage,
+}: {
+  material: StudyMaterial;
+  big?: boolean;
+  canManage?: boolean;
+}) {
+  const ehPdf = material.mime_type === "application/pdf";
   // Se a imagem não carregar por qualquer motivo (URL assinada expirada, rede
   // instável), cai para o ícone colorido em vez de deixar o navegador mostrar
   // o ícone de imagem quebrada — mesmo fallback que os outros tipos já usam.
   const [falhou, setFalhou] = useState(false);
-  if (material.thumbnail_url && !falhou) {
+  const gerada = usePdfCover(material, Boolean(canManage) && ehPdf && (!material.thumbnail_url || falhou));
+  const src = (!falhou && material.thumbnail_url) || gerada;
+
+  // Capa de PDF é uma página em pé (3:4): mostra a página inteira, alinhada
+  // ao topo. Imagem solta continua em formato de paisagem.
+  const aspect = ehPdf ? "aspect-[3/4]" : big ? "aspect-[16/9]" : "aspect-[4/3]";
+  if (src) {
     return (
       <div className={`${aspect} w-full overflow-hidden rounded-t-xl bg-muted`}>
         {/* eslint-disable-next-line @next/next/no-img-element -- URL assinada temporária, sem otimização do next/image */}
         <img
-          src={material.thumbnail_url}
+          src={src}
           alt=""
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover object-top"
           onError={() => setFalhou(true)}
         />
       </div>
@@ -67,7 +141,9 @@ function MaterialCover({ material, big }: { material: StudyMaterial; big?: boole
   }
   const { Icon, className } = coverStyle(material.mime_type);
   return (
-    <div className={`flex ${aspect} w-full items-center justify-center rounded-t-xl ${className}`}>
+    <div
+      className={`flex ${aspect} w-full items-center justify-center rounded-t-xl ${className}`}
+    >
       <Icon size={big ? 56 : 36} strokeWidth={1.25} />
     </div>
   );
@@ -318,7 +394,7 @@ function MaterialCard({
 
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-card">
-      <MaterialCover material={material} big={big} />
+      <MaterialCover material={material} big={big} canManage={canManage} />
       <div className="flex flex-1 flex-col gap-1 p-4">
         <p className={`truncate font-medium text-foreground ${big ? "text-base" : "text-sm"}`}>
           {material.title}
