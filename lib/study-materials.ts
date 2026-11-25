@@ -67,4 +67,11 @@ export function estudoVisivelNoFeed(
   const mes = mesDoMaterial.slice(0, 7);
   if (mes === mesAtual) return true;
   return mes === proximoMes && PAPEIS_QUE_VEEM_PROXIMO_MES.has(papel);
+
+// Capa do PDF: imagem da 1ª página, guardada no mesmo bucket ao lado do
+// arquivo (sem coluna nova no banco: o caminho é derivado do próprio PDF).
+export const STUDY_COVER_SUFFIX = ".capa.jpg";
+
+export function studyCoverPath(storagePath: string) {
+  return `${storagePath}${STUDY_COVER_SUFFIX}`;
 }

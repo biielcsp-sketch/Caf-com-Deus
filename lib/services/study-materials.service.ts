@@ -9,6 +9,7 @@ import {
   STUDY_ALLOWED_EXTENSIONS,
   STUDY_MIME_BY_EXTENSION,
   STUDY_PATH_PATTERN,
+  studyCoverPath,
   studyFileExtension,
 } from "@/lib/study-materials";
 
@@ -94,10 +95,15 @@ export async function listStudyMaterials(): Promise<StudyMaterial[]> {
   const materials = data ?? [];
   return Promise.all(
     materials.map(async (material) => {
-      if (!material.mime_type.startsWith("image/")) return material;
+      // Imagem: a própria imagem é a miniatura. PDF: a capa (1ª página)
+      // guardada ao lado do arquivo; se ainda não existe, a URL vem nula e a
+      // tela mostra o ícone (a pastora gera a capa ao abrir Estudo do mês).
+      const ehImagem = material.mime_type.startsWith("image/");
+      const ehPdf = material.mime_type === "application/pdf";
+      if (!ehImagem && !ehPdf) return material;
       const { data: signed } = await supabase.storage
         .from(BUCKET)
-        .createSignedUrl(material.storage_path, 60 * 10);
+        .createSignedUrl(ehPdf ? studyCoverPath(material.storage_path) : material.storage_path, 60 * 10);
       return { ...material, thumbnail_url: signed?.signedUrl ?? null };
     }),
   );
@@ -312,7 +318,7 @@ export async function deleteStudyMaterial(id: string) {
   const { error: deleteError } = await supabase.from("study_materials").delete().eq("id", id);
   if (deleteError) dbError(deleteError, "studyMaterials.delete");
 
-  await supabase.storage.from(BUCKET).remove([material.storage_path]);
+  await supabase.storage.from(BUCKET).remove([material.storage_path, studyCoverPath(material.storage_path)]);
 
   await logAuditEvent({
     action: "study_material.delete",
