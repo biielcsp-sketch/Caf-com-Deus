@@ -1267,6 +1267,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      app_mural_names: {
+        Args: { p_photo_ids: string[] }
+        Returns: { photo_id: string; group_name: string | null; author_name: string | null }[]
+      }
+      app_mural_comment_authors: {
+        Args: { p_comment_ids: string[] }
+        Returns: { comment_id: string; author_name: string | null }[]
+      }
       app_check_claim_account_rate_limit: {
         Args: { p_key: string }
         Returns: boolean

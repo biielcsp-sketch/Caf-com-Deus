@@ -93,8 +93,6 @@ type MediaRow = {
   media_type: string;
   group_id: string;
   author_profile_id: string;
-  group: { name: string } | null;
-  author: { full_name: string | null } | null;
   likes: { count: number }[];
   comments: { count: number }[];
 };
@@ -118,7 +116,6 @@ type MediaRow = {
 // uma tabela de junção, nomeie a chave estrangeira.
 const MEDIA_SELECT =
   "id, caption, created_at, media_type, group_id, author_profile_id, " +
-  "group:groups(name), author:profiles!cafe_photos_author_profile_id_fkey(full_name), " +
   "likes:cafe_photo_likes(count), comments:cafe_photo_comments(count)";
 
 async function decorate(rows: MediaRow[]): Promise<CafeMedia[]> {
@@ -126,6 +123,16 @@ async function decorate(rows: MediaRow[]): Promise<CafeMedia[]> {
 
   const profile = await getCurrentProfile();
   const supabase = await createClient();
+
+  // Nome da autora e do café vêm de uma função do banco, não de embutir
+  // `groups`/`profiles`: essas tabelas são fechadas para participante, e o
+  // mural é aberto a todas — embutir daria nome vazio nas publicações de
+  // outros cafés.
+  const { data: nomes, error: nomesError } = await supabase.rpc("app_mural_names", {
+    p_photo_ids: rows.map((r) => r.id),
+  });
+  if (nomesError) dbError(nomesError, "cafeMedia.names");
+  const nomesPorId = new Map((nomes ?? []).map((n) => [n.photo_id, n]));
 
   // Quais destas eu curti — uma consulta só para a página inteira, em vez
   // de uma por publicação. Curtida é sempre no id da linha-pai; fotos do
@@ -171,9 +178,9 @@ async function decorate(rows: MediaRow[]): Promise<CafeMedia[]> {
       caption: row.caption,
       createdAt: row.created_at,
       groupId: row.group_id,
-      groupName: row.group?.name ?? null,
+      groupName: nomesPorId.get(row.id)?.group_name ?? null,
       authorId: row.author_profile_id,
-      authorName: row.author?.full_name ?? null,
+      authorName: nomesPorId.get(row.id)?.author_name ?? null,
       url: `/api/midia/${row.id}`,
       items: itemIds.map((id) => ({ id, url: `/api/midia/${id}` })),
       likeCount: row.likes?.[0]?.count ?? 0,
@@ -600,17 +607,26 @@ export async function listCafeMediaComments(mediaId: string): Promise<CafeMediaC
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("cafe_photo_comments")
-    .select("id, body, created_at, profile_id, author:profiles(full_name)")
+    .select("id, body, created_at, profile_id")
     .eq("photo_id", mediaId)
     .order("created_at", { ascending: true });
 
   if (error) dbError(error, "cafeMedia.listComments");
 
-  return (data ?? []).map((c) => ({
+  // Quem comentou pode ser de outro café (e `profiles` é fechada para quem
+  // não é admin): o nome vem da função do banco.
+  const comentarios = data ?? [];
+  const { data: nomes, error: nomesError } = comentarios.length
+    ? await supabase.rpc("app_mural_comment_authors", { p_comment_ids: comentarios.map((c) => c.id) })
+    : { data: [], error: null };
+  if (nomesError) dbError(nomesError, "cafeMedia.commentAuthors");
+  const nomePorComentario = new Map((nomes ?? []).map((n) => [n.comment_id, n.author_name]));
+
+  return comentarios.map((c) => ({
     id: c.id,
     body: c.body,
     createdAt: c.created_at,
-    authorName: (c.author as { full_name: string | null } | null)?.full_name ?? null,
+    authorName: nomePorComentario.get(c.id) ?? null,
     authorId: c.profile_id,
   }));
 }
