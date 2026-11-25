@@ -97,5 +97,5 @@ export async function submitPublicEnrollmentAction(
   });
   if (signInError) redirect("/login");
 
-  redirect("/minha-jornada");
+  redirect("/feed");
 }

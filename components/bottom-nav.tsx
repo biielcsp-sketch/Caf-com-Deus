@@ -43,7 +43,7 @@ export function BottomNav({
             >
               <Icon size={center ? 20 : 17} strokeWidth={active || center ? 2.2 : 1.8} />
             </span>
-            <span className={active ? "text-primary" : "text-muted-foreground"}>{item.label}</span>
+            <span className={`whitespace-nowrap ${active ? "text-primary" : "text-muted-foreground"}`}>{item.label}</span>
           </Link>
         );
       })}

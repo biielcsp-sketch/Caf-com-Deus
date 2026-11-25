@@ -1269,7 +1269,12 @@ export type Database = {
     Functions: {
       app_mural_names: {
         Args: { p_photo_ids: string[] }
-        Returns: { photo_id: string; group_name: string | null; author_name: string | null }[]
+        Returns: {
+          photo_id: string
+          group_name: string | null
+          author_name: string | null
+          author_avatar_path: string | null
+        }[]
       }
       app_mural_comment_authors: {
         Args: { p_comment_ids: string[] }

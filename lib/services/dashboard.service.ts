@@ -189,8 +189,48 @@ export async function getLeaderDashboard(leaderId: string) {
   const inactiveCount = (myParticipants ?? []).filter((p) => p.status === "inativa").length;
   const visitorCount = (myParticipants ?? []).filter((p) => p.status !== "inativa" && p.is_visitor).length;
 
+  // Vagas do café (o mesmo "máximo" que a lista de Líderes mostra).
+  const { data: leaderRow } = await supabase
+    .from("leaders")
+    .select("max_capacity")
+    .eq("id", leaderId)
+    .maybeSingle();
+
+  // Presença no mês: dos encontros REALIZADOS deste mês, quantos registros
+  // de chamada foram "presente". "Não informado" fica fora — é chamada
+  // ainda não feita, não ausência. Sem nenhuma chamada no mês, é null (a
+  // tela mostra "—", não 0%).
+  const { data: encontrosDoMes } = await supabase
+    .from("meetings")
+    .select("id")
+    .eq("leader_id", leaderId)
+    .eq("status", "realizado")
+    .gte("date", primeiroDiaDoMesEmSaoPaulo())
+    .lte("date", hojeEmSaoPaulo());
+  let presencaNoMes: number | null = null;
+  const idsDoMes = (encontrosDoMes ?? []).map((m) => m.id);
+  if (idsDoMes.length > 0) {
+    const { data: chamadas } = await supabase
+      .from("attendance")
+      .select("status")
+      .in("meeting_id", idsDoMes)
+      .neq("status", "nao_informado");
+    const total = chamadas?.length ?? 0;
+    if (total > 0) {
+      const presentes = (chamadas ?? []).filter((c) => c.status === "presente").length;
+      presencaNoMes = Math.round((presentes / total) * 100);
+    }
+  }
+  const presencaUltimoEncontro =
+    lastMeetingSummary && lastMeetingSummary.registradas > 0
+      ? Math.round((lastMeetingSummary.presentes / lastMeetingSummary.registradas) * 100)
+      : null;
+
   return {
     participantCount: (myParticipants?.length ?? 0) - inactiveCount - visitorCount,
+    maxCapacity: leaderRow?.max_capacity ?? null,
+    presencaUltimoEncontro,
+    presencaNoMes,
     visitorCount,
     inactiveCount,
     lastMeeting,

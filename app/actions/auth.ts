@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { isAdminRole } from "@/lib/services/profiles.service";
 import { checkLoginRateLimit } from "@/lib/rate-limit";
 import { logAuthEvent } from "@/lib/services/auth-audit.service";
 
@@ -53,13 +52,9 @@ export async function login(_state: LoginState, formData: FormData): Promise<Log
     return { error: "Esta conta foi desativada." };
   }
 
-  if (isAdminRole(profile?.role)) {
-    redirect("/dashboard");
-  }
-  if (profile?.role === "participante") {
-    redirect("/minha-jornada");
-  }
-  redirect("/inicio");
+  // Todo perfil abre no Feed. Início (líder) e Dashboard (gestão) continuam
+  // a um toque, no menu e na barra de baixo.
+  redirect("/feed");
 }
 
 export async function logout() {
