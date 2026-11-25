@@ -46,3 +46,25 @@ export const STUDY_PATH_PATTERN =
 export function buildStudyStoragePath(referenceMonth: string, ext: string) {
   return `${referenceMonth}/${crypto.randomUUID()}.${ext}`;
 }
+
+// Quem vê o estudo do mês SEGUINTE no Feed ("Já disponível"): líder, co-líder
+// e a gestão. As demais participantes só veem o mês vigente. É regra de
+// exibição — o banco libera a leitura de todos os materiais a qualquer logada.
+const PAPEIS_QUE_VEEM_PROXIMO_MES = new Set([
+  "lider",
+  "co_lider",
+  "admin",
+  "desenvolvedor",
+  "gestora_de_pessoas",
+]);
+
+export function estudoVisivelNoFeed(
+  papel: string,
+  mesDoMaterial: string,
+  mesAtual: string,
+  proximoMes: string,
+): boolean {
+  const mes = mesDoMaterial.slice(0, 7);
+  if (mes === mesAtual) return true;
+  return mes === proximoMes && PAPEIS_QUE_VEEM_PROXIMO_MES.has(papel);
+}
