@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { GroupsList } from "@/components/grupos/groups-list";
 import type { listGroups } from "@/lib/services/groups.service";
+import { AVAILABILITY_DAYS, AVAILABILITY_DAY_LABELS } from "@/lib/validators/participant.schema";
 import type { Enums } from "@/types/database.types";
 
 type GroupItem = Awaited<ReturnType<typeof listGroups>>[number];
@@ -26,22 +27,21 @@ export function GruposPanel({
   groups: GroupItem[];
   leaders: { id: string; full_name: string }[];
 }) {
-  const [search, setSearch] = useState("");
+  const [day, setDay] = useState("");
   const [status, setStatus] = useState("");
   const [leaderId, setLeaderId] = useState("");
   const [region, setRegion] = useState("");
 
   const filtered = useMemo(() => {
-    const termo = search.trim().toLowerCase();
     const termoRegion = region.trim().toLowerCase();
     return groups.filter((g) => {
-      if (termo && !g.name.toLowerCase().includes(termo)) return false;
+      if (day && !(g.available_days ?? []).includes(day)) return false;
       if (status && g.status !== status) return false;
       if (leaderId && g.leader_id !== leaderId) return false;
       if (termoRegion && !(g.region ?? "").toLowerCase().includes(termoRegion)) return false;
       return true;
     });
-  }, [groups, search, status, leaderId, region]);
+  }, [groups, day, status, leaderId, region]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -58,12 +58,14 @@ export function GruposPanel({
 
       <SecaoRetratil titulo="Filtros" nivel="h2">
       <div className="grid grid-cols-1 gap-3 pt-1 sm:grid-cols-2 md:grid-cols-4">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por nome"
-          className={inputClass}
-        />
+        <select value={day} onChange={(e) => setDay(e.target.value)} className={inputClass}>
+          <option value="">Todos os dias</option>
+          {AVAILABILITY_DAYS.map((d) => (
+            <option key={d} value={d}>
+              {AVAILABILITY_DAY_LABELS[d]}
+            </option>
+          ))}
+        </select>
         <select value={status} onChange={(e) => setStatus(e.target.value)} className={inputClass}>
           <option value="">Todos os status</option>
           {(Object.entries(STATUS_LABELS) as [Enums<"group_status">, string][]).map(([value, label]) => (
