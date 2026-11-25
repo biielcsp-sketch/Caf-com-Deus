@@ -86,9 +86,13 @@ function monthLabel(referenceMonth: string) {
 export function StudyMaterialsPanel({
   materials,
   canManage,
+  upcomingMonth,
 }: {
   materials: StudyMaterial[];
   canManage: boolean;
+  // Mês seguinte já publicado (AAAA-MM): ganha o selo "Já disponível" e fica
+  // depois do mês atual. Só o Feed da líder passa isto.
+  upcomingMonth?: string;
 }) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -176,6 +180,11 @@ export function StudyMaterialsPanel({
     return acc;
   }, {});
   const months = Object.keys(grouped).sort().reverse();
+  // Com o mês seguinte em destaque, o mês atual vem primeiro: é o estudo que
+  // está valendo agora.
+  if (upcomingMonth) {
+    months.sort((a, b) => Number(b === mesAtualEmSaoPaulo()) - Number(a === mesAtualEmSaoPaulo()) || b.localeCompare(a));
+  }
 
   // Em UTC, no último dia do mês depois das 21h em Brasília, isto já apontava
   // para o mês seguinte e o estudo do mês perdia o rótulo "Estudo deste mês".
@@ -238,12 +247,18 @@ export function StudyMaterialsPanel({
       ) : (
         months.map((month) => {
           const isCurrent = month === currentMonth;
+          const isUpcoming = month === upcomingMonth;
           return (
             <div key={month}>
               <div className="mb-3 flex items-center gap-2">
                 <p className="text-sm font-semibold capitalize text-foreground">
-                  {isCurrent ? "Estudo deste mês" : monthLabel(month)}
+                  {isCurrent ? "Estudo deste mês" : isUpcoming ? `Estudo de ${monthLabel(month)}` : monthLabel(month)}
                 </p>
+                {isUpcoming && (
+                  <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">
+                    Já disponível
+                  </span>
+                )}
                 {isCurrent && (
                   <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                     Mês atual

@@ -13,7 +13,8 @@ import { StudyMaterialsPanel } from "@/components/estudos/study-materials-panel"
 import { Card } from "@/components/ui/Card";
 import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { hojeEmSaoPaulo } from "@/lib/dates";
+import { estudoVisivelNoFeed } from "@/lib/study-materials";
+import { hojeEmSaoPaulo, primeiroDiaDoProximoMesEmSaoPaulo } from "@/lib/dates";
 
 // Feed: a tela onde a comunidade acompanha o que está acontecendo —
 // versículo do dia, próximos encontros, o tema do mês (só leitura; quem
@@ -51,7 +52,15 @@ export default async function FeedPage() {
   // Só o material do mês corrente aparece no Feed; o histórico completo
   // fica em /estudos, para quem tem acesso.
   const currentMonth = today.slice(0, 7);
-  const monthMaterials = materials.filter((m) => m.reference_month.slice(0, 7) === currentMonth);
+  //
+  // Exceção: líder e co-líder (e a gestão) também veem o estudo do mês
+  // seguinte assim que a pastora publica, marcado "Já disponível", para se
+  // prepararem antes do dia 1º. As demais participantes só veem o mês vigente.
+  const nextMonth = primeiroDiaDoProximoMesEmSaoPaulo().slice(0, 7);
+  const monthMaterials = materials.filter((m) =>
+    estudoVisivelNoFeed(profile.role, m.reference_month, currentMonth, nextMonth),
+  );
+  const veProximoMes = estudoVisivelNoFeed(profile.role, nextMonth, currentMonth, nextMonth);
 
   return (
     <RoleShell profile={profile} avatarUrl={avatarUrl}>
@@ -112,7 +121,11 @@ export default async function FeedPage() {
           ) : (
             // canManage=false: no Feed o tema é só leitura — publicar é na
             // aba Estudo do mês, exclusiva da pastora.
-            <StudyMaterialsPanel materials={monthMaterials} canManage={false} />
+            <StudyMaterialsPanel
+              materials={monthMaterials}
+              canManage={false}
+              upcomingMonth={veProximoMes ? nextMonth : undefined}
+            />
           )}
         </SecaoRetratil>
 
