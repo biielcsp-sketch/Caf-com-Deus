@@ -10,6 +10,7 @@ import { listPendingContacts } from "@/lib/services/contact-alerts.service";
 import { PendingContactsCard } from "@/components/acompanhamento/pending-contacts-card";
 import { getVapidPublicKey } from "@/lib/services/push.service";
 import { PushOptIn } from "@/components/push-opt-in";
+import { KpisDoCafe } from "@/components/inicio/kpis-do-cafe";
 
 export default async function InicioPage() {
   const profile = await getCurrentProfile();
@@ -79,6 +80,16 @@ export default async function InicioPage() {
 
       <PushOptIn publicKey={getVapidPublicKey()} somenteConvite />
       <PendingContactsCard contacts={pendentes} mode="lider" />
+
+      <KpisDoCafe
+        membros={data.participantCount}
+        vagas={data.maxCapacity}
+        presencaUltimoEncontro={data.presencaUltimoEncontro}
+        presencaNoMes={data.presencaNoMes}
+        precisamAtencao={data.needingAttention}
+        visitantes={data.visitorCount}
+        inativas={data.inactiveCount}
+      />
 
       {/* Destaque: próximo encontro */}
       <section

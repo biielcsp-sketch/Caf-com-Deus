@@ -49,6 +49,9 @@ export type CafeMedia = {
   groupName: string | null;
   authorId: string;
   authorName: string | null;
+  /** Foto de perfil de quem publicou, já com URL assinada de 1h; nula se a
+   *  pessoa não tem foto (a tela mostra as iniciais). */
+  authorAvatarUrl: string | null;
   /** Onde o navegador busca o arquivo. Sempre uma rota nossa, nunca o
    *  Drive direto — é ela que confere se quem pediu pode ver. */
   url: string;
@@ -134,6 +137,28 @@ async function decorate(rows: MediaRow[]): Promise<CafeMedia[]> {
   if (nomesError) dbError(nomesError, "cafeMedia.names");
   const nomesPorId = new Map((nomes ?? []).map((n) => [n.photo_id, n]));
 
+  // O bucket `avatars` é privado e a política de leitura só deixa cada uma
+  // ver a PRÓPRIA foto. Para mostrar a foto de quem publicou, o servidor
+  // assina a URL com a chave de serviço — só dos caminhos que a função
+  // acima devolveu, ou seja, de autoras de publicações que esta pessoa já
+  // pode ver. O que vai ao navegador é uma URL que expira em 1h.
+  const caminhos = [
+    ...new Set(
+      (nomes ?? [])
+        .map((n) => n.author_avatar_path)
+        .filter((c): c is string => Boolean(c)),
+    ),
+  ];
+  const avatarPorCaminho = new Map<string, string>();
+  if (caminhos.length > 0) {
+    const { data: assinadas } = await createAdminClient()
+      .storage.from("avatars")
+      .createSignedUrls(caminhos, 60 * 60);
+    for (const a of assinadas ?? []) {
+      if (a.path && a.signedUrl) avatarPorCaminho.set(a.path, a.signedUrl);
+    }
+  }
+
   // Quais destas eu curti — uma consulta só para a página inteira, em vez
   // de uma por publicação. Curtida é sempre no id da linha-pai; fotos do
   // carrossel (linhas filhas) não têm curtida própria.
@@ -181,6 +206,7 @@ async function decorate(rows: MediaRow[]): Promise<CafeMedia[]> {
       groupName: nomesPorId.get(row.id)?.group_name ?? null,
       authorId: row.author_profile_id,
       authorName: nomesPorId.get(row.id)?.author_name ?? null,
+      authorAvatarUrl: avatarPorCaminho.get(nomesPorId.get(row.id)?.author_avatar_path ?? "") ?? null,
       url: `/api/midia/${row.id}`,
       items: itemIds.map((id) => ({ id, url: `/api/midia/${id}` })),
       likeCount: row.likes?.[0]?.count ?? 0,
@@ -215,28 +241,52 @@ export async function getLatestCafeMedia(): Promise<CafeMedia | null> {
 }
 
 // Os cafés em que a usuária pode publicar: os que ela lidera (líder ou
-// co-líder). Admin recebe todos; participante e anfitriã, nenhum — elas
-// curtem e comentam, mas não postam.
+// co-líder), o café em que ela é participante, e todos para a admin.
+// Anfitriã não publica — ela curte e comenta.
 export async function listGroupsICanPostTo(): Promise<{ id: string; name: string }[]> {
   const profile = await getCurrentProfile();
   if (!profile) return [];
 
   const supabase = await createClient();
+  const isAdmin = isAdminRole(profile.role);
+
   const { data: leader } = await supabase
     .from("leaders")
     .select("id")
     .eq("profile_id", profile.id)
     .maybeSingle();
 
-  const isAdmin = isAdminRole(profile.role);
-  if (!leader && !isAdmin) return [];
+  if (leader || isAdmin) {
+    let query = supabase.from("groups").select("id, name").order("name");
+    if (!isAdmin && leader) query = query.eq("leader_id", leader.id);
 
-  let query = supabase.from("groups").select("id, name").order("name");
-  if (!isAdmin && leader) query = query.eq("leader_id", leader.id);
+    const { data, error } = await query;
+    if (error) dbError(error, "cafeMedia.listGroupsICanPostTo");
+    return data ?? [];
+  }
 
-  const { data, error } = await query;
-  if (error) dbError(error, "cafeMedia.listGroupsICanPostTo");
-  return data ?? [];
+  // Participante: o café em que ela está hoje. Mesma regra da RLS de
+  // inserção (excluída, anonimizada ou inativa não publica) — a política
+  // do banco é quem decide de verdade, isto só evita mostrar um formulário
+  // que o banco ia recusar.
+  const { data: participante, error: participanteError } = await supabase
+    .from("participants")
+    .select("current_group_id")
+    .eq("profile_id", profile.id)
+    .is("deleted_at", null)
+    .is("anonymized_at", null)
+    .neq("status", "inativa")
+    .maybeSingle();
+  if (participanteError) dbError(participanteError, "cafeMedia.participantGroup");
+  if (!participante?.current_group_id) return [];
+
+  const { data: grupo, error: grupoError } = await supabase
+    .from("groups")
+    .select("id, name")
+    .eq("id", participante.current_group_id)
+    .maybeSingle();
+  if (grupoError) dbError(grupoError, "cafeMedia.participantGroupName");
+  return grupo ? [grupo] : [];
 }
 
 /* ------------------------- A pasta do mural -------------------------

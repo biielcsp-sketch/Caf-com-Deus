@@ -13,7 +13,7 @@ import { Card } from "@/components/ui/Card";
 import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 
 // Mural: feed com as fotos e vídeos de TODOS os cafés. Todas veem; publicam a líder, a
-// co-líder e a admin. Os arquivos ficam no Google Drive — aqui só passa
+// co-líder, a admin e a participante (no próprio café). Os arquivos ficam no Google Drive — aqui só passa
 // o que descreve a publicação.
 export default async function MuralPage() {
   const profile = await getCurrentProfile();
@@ -50,7 +50,11 @@ export default async function MuralPage() {
   // para distinguir "não pode publicar" de "pode, mas falta alguma coisa"
   // — antes as duas situações davam a mesma tela em branco.
   const deveriaPublicar =
-    isAdmin || profile.role === "lider" || profile.role === "co_lider" || profile.role === "gestora_de_pessoas";
+    isAdmin ||
+    profile.role === "lider" ||
+    profile.role === "co_lider" ||
+    profile.role === "gestora_de_pessoas" ||
+    profile.role === "participante";
 
   const driveFaltando = driveConfigStatus()
     .filter((v) => !v.presente)

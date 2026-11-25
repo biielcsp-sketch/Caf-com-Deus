@@ -14,6 +14,32 @@ import type { CafeMedia, CafeMediaComment } from "@/lib/services/cafe-media.serv
 const inputClass =
   "w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary";
 
+function iniciais(nome: string | null) {
+  const partes = (nome ?? "").trim().split(/\s+/).filter(Boolean);
+  if (partes.length === 0) return "?";
+  const primeira = partes[0].charAt(0);
+  const ultima = partes.length > 1 ? partes[partes.length - 1].charAt(0) : "";
+  return (primeira + ultima).toUpperCase();
+}
+
+// Foto redonda de quem publicou; sem foto, as iniciais num círculo.
+function AutorAvatar({ nome, url }: { nome: string | null; url: string | null }) {
+  if (url) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- URL assinada e temporária, não vale passar pelo otimizador do next/image
+      <img src={url} alt="" className="h-10 w-10 shrink-0 rounded-full bg-muted object-cover" />
+    );
+  }
+  return (
+    <div
+      aria-hidden
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary"
+    >
+      {iniciais(nome)}
+    </div>
+  );
+}
+
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("pt-BR", {
     day: "2-digit",
@@ -195,6 +221,18 @@ export function MediaCard({
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border bg-card">
+      <header className="flex items-center gap-3 px-4 py-3">
+        <AutorAvatar nome={media.authorName} url={media.authorAvatarUrl} />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold text-foreground">
+            {media.authorName ?? "Alguém do café"}
+          </p>
+          <p className="truncate text-xs text-muted-foreground">
+            {media.groupName ?? "Café"} · {formatDate(media.createdAt)}
+          </p>
+        </div>
+      </header>
+
       {/* O arquivo vem sempre da nossa rota, que confere a permissão antes
           de repassar os bytes do Drive. */}
       {media.mediaType === "video" ? (
@@ -265,12 +303,6 @@ export function MediaCard({
         {media.caption && (
           <p className="mt-2 whitespace-pre-line text-sm text-foreground">{media.caption}</p>
         )}
-
-        <p className="mt-1.5 text-xs text-muted-foreground">
-          {[media.groupName, media.authorName].filter(Boolean).join(" · ")}
-          {media.groupName || media.authorName ? " · " : ""}
-          {formatDate(media.createdAt)}
-        </p>
 
         {error && <p className="mt-2 text-sm text-danger">{error}</p>}
 

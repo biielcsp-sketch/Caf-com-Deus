@@ -59,7 +59,7 @@ export function SetPasswordForm() {
       return;
     }
 
-    router.push("/minha-jornada");
+    router.push("/feed");
   }
 
   if (status === "checking") {
