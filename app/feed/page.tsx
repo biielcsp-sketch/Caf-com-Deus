@@ -14,6 +14,7 @@ import { Card } from "@/components/ui/Card";
 import { SecaoRetratil } from "@/components/ui/SecaoRetratil";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { estudoVisivelNoFeed } from "@/lib/study-materials";
+import { proximosEncontros } from "@/lib/proximos-encontros";
 import { hojeEmSaoPaulo, primeiroDiaDoProximoMesEmSaoPaulo } from "@/lib/dates";
 
 // Feed: a tela onde a comunidade acompanha o que está acontecendo —
@@ -44,10 +45,7 @@ export default async function FeedPage() {
   ]);
 
   const today = hojeEmSaoPaulo();
-  const upcoming = meetings
-    .filter((m) => m.date >= today && m.status !== "cancelado")
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .slice(0, 4);
+  const { itens: upcoming, total: totalProximos } = proximosEncontros(meetings, today);
 
   // Só o material do mês corrente aparece no Feed; o histórico completo
   // fica em /estudos, para quem tem acesso.
@@ -89,7 +87,7 @@ export default async function FeedPage() {
           </Card>
         )}
 
-        <SecaoRetratil titulo="Próximos encontros" contador={upcoming.length} abertoPorPadrao>
+        <SecaoRetratil titulo="Próximos encontros" contador={totalProximos} abertoPorPadrao>
           {upcoming.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhum encontro agendado no momento.</p>
           ) : (
@@ -109,6 +107,11 @@ export default async function FeedPage() {
                   )}
                 </div>
               ))}
+              {totalProximos > upcoming.length && (
+                <p className="text-center text-xs text-muted-foreground">
+                  Mostrando os {upcoming.length} primeiros de {totalProximos} encontros.
+                </p>
+              )}
             </div>
           )}
         </SecaoRetratil>
