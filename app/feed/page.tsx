@@ -8,6 +8,7 @@ import { listStudyMaterials } from "@/lib/services/study-materials.service";
 import { getLatestCafeMedia } from "@/lib/services/cafe-media.service";
 import { listMeetings } from "@/lib/services/meetings.service";
 import { RoleShell } from "@/components/role-shell";
+import { ProximosEncontrosLista } from "@/components/feed/proximos-encontros-lista";
 import { LatestMedia } from "@/components/feed/latest-media";
 import { StudyMaterialsPanel } from "@/components/estudos/study-materials-panel";
 import { Card } from "@/components/ui/Card";
@@ -45,6 +46,7 @@ export default async function FeedPage() {
   ]);
 
   const today = hojeEmSaoPaulo();
+  // Todos os próximos; a lista mostra 10 e abre o resto em "Ver mais".
   const { itens: upcoming, total: totalProximos } = proximosEncontros(meetings, today);
 
   // Só o material do mês corrente aparece no Feed; o histórico completo
@@ -91,28 +93,16 @@ export default async function FeedPage() {
           {upcoming.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhum encontro agendado no momento.</p>
           ) : (
-            <div className="flex flex-col gap-3">
-              {upcoming.map((meeting) => (
-                <div key={meeting.id} className="rounded-xl border border-border p-3">
-                  <p className="text-sm font-medium text-foreground">{meeting.title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(`${meeting.date}T00:00:00`).toLocaleDateString("pt-BR")}
-                    {meeting.time ? ` — ${meeting.time.slice(0, 5)}` : ""}
-                    {meeting.group?.name ? ` · ${meeting.group.name}` : ""}
-                  </p>
-                  {meeting.ministered_by && (
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Palavra: {meeting.ministered_by}
-                    </p>
-                  )}
-                </div>
-              ))}
-              {totalProximos > upcoming.length && (
-                <p className="text-center text-xs text-muted-foreground">
-                  Mostrando os {upcoming.length} primeiros de {totalProximos} encontros.
-                </p>
-              )}
-            </div>
+            <ProximosEncontrosLista
+              encontros={upcoming.map((m) => ({
+                id: m.id,
+                title: m.title,
+                date: m.date,
+                time: m.time,
+                groupName: m.group?.name ?? null,
+                ministeredBy: m.ministered_by,
+              }))}
+            />
           )}
         </SecaoRetratil>
 
